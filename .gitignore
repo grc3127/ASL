@@ -1,0 +1,41 @@
+# Environment/config files
+.env
+.env.*
+
+# Database configuration
+db.php
+
+# Local XAMPP files
+xampp/
+htdocs/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# Node dependencies, if applicable
+node_modules/
+
+# Generated/cache files
+cache/
+temp/
+uploads/
+
+css/login.css
+css/loginbackup.css
+css/main_backup.css
+css/main_lessons_updated.css
+css/main-old.css
+
+backup/
