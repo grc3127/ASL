@@ -32,10 +32,10 @@ cache/
 temp/
 uploads/
 
-css/login.css
-css/loginbackup.css
-css/main_backup.css
-css/main_lessons_updated.css
-css/main-old.css
+assets/css/login.css
+assets/css/loginbackup.css
+assets/css/main_backup.css
+assets/css/main_lessons_updated.css
+assets/css/main-old.css
 
 backup/
