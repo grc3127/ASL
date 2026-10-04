@@ -1,5 +1,13 @@
 <?php
-session_start();
+/**
+ * KIDSS logout endpoint.
+ */
+
+declare(strict_types=1);
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
 $_SESSION = [];
 
