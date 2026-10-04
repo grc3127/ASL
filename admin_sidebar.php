@@ -34,5 +34,11 @@
         <div class="admin-section">SETTINGS</div>
         <a href="#" class="admin-link" data-page="admin_profile"><i class="bi bi-person-circle"></i><span>Admin Profile</span></a>
         <a href="#" class="admin-link" data-page="admin_settings"><i class="bi bi-gear-fill"></i><span>System Settings</span></a>
+
+        <div style="margin-top:20px;padding:0 5px">
+            <a href="logout.php" class="admin-link" style="color:#ef5b68">
+                <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+            </a>
+        </div>
     </nav>
 </aside>
