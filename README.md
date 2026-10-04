@@ -3,12 +3,12 @@ https://docs.google.com/spreadsheets/d/1tGgXoFbHq1CAuQ9vMf2qdTkgW9G8tR5gsPTttuam
 **Main Page**: index.php
 
 **User Credentials**:
-  -> Admin:
+  Admin:
         user: a
         pass: a
-  -> teacher:
+  teacher:
         user: b
         pass: b
-  -> student:
+  student:
         user: c
         pass: c
