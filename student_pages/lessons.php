@@ -1,3 +1,7 @@
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+$studentDisplayName = htmlspecialchars((string)($_SESSION['name'] ?? 'Student'), ENT_QUOTES, 'UTF-8');
+?>
 <div class="lessons-page-body">
     <!-- Header / Welcome & User Bar -->
     <div class="row align-items-center mb-4 g-3">
@@ -24,12 +28,12 @@
                 <span class="badge-count" style="background: #f59e0b;">12</span>
             </div> -->
             <div class="profile-pill d-flex align-items-center">
-                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Augusto" alt="Augusto Avatar" class="user-avatar">
+                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=<?= rawurlencode((string)($_SESSION['name'] ?? 'Student')) ?>" alt="Student avatar" class="user-avatar">
                 <div class="lh-1 me-2">
-                    <div class="fw-bold fs-6">Augusto</div>
-                    <small class="text-muted" style="font-size: 0.75rem;">Kinder Learner</small>
+                    <div class="fw-bold fs-6"><?= $studentDisplayName ?></div>
+                    <small class="text-muted" style="font-size: 0.75rem;"></small>
                 </div>
-                <i class="bi bi-chevron-down text-muted fs-7"></i>
+                <i></i>
             </div>
         </div>
     </div>

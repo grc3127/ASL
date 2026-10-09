@@ -1,8 +1,12 @@
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+$studentDisplayName = htmlspecialchars((string)($_SESSION['name'] ?? 'Student'), ENT_QUOTES, 'UTF-8');
+?>
 
 <!-- Row 1: Header / Welcome & User Bar -->
 <div class="row align-items-center mb-4 g-3">
     <div class="col-12 col-md-6">
-        <h2 class="fw-extrabold mb-0 fs-3">Hi, Augusto! 👋</h2>
+        <h2 class="fw-extrabold mb-0 fs-3">Hi, <?= $studentDisplayName ?>! 👋</h2>
         <p class="text-muted fw-semibold mb-0">Ready to learn and have fun today?</p>
     </div>
     <div class="col-12 col-md-6 d-flex justify-content-md-end align-items-center gap-3">
@@ -18,12 +22,12 @@
         </div> -->
         <!-- Profile Card -->
         <div class="profile-pill d-flex align-items-center">
-            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Augusto" alt="Augusto Avatar" class="user-avatar">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=<?= rawurlencode((string)($_SESSION['name'] ?? 'Student')) ?>" alt="Student avatar" class="user-avatar">
             <div class="lh-1 me-2">
-                <div class="fw-bold fs-6">Augusto</div>
-                <small class="text-muted" style="font-size: 0.75rem;">Kinder Learner</small>
+                <div class="fw-bold fs-6"><?= $studentDisplayName ?></div>
+                <small class="text-muted" style="font-size: 0.75rem;"></small>
             </div>
-            <i class="bi bi-chevron-down text-muted fs-7"></i>
+            <i ></i>
         </div>
     </div>
 </div>
@@ -37,7 +41,7 @@
             <p class="text-secondary fw-semibold mb-4 fs-6" style="max-width: 400px;">
                 You're doing great! Let's continue where you left off.
             </p>
-            <button class="btn btn-resume d-inline-flex align-items-center gap-2">
+            <button type="button" class="btn btn-resume d-inline-flex align-items-center gap-2" onclick="loadPage('lessons')">
                 <i class="bi bi-play-fill fs-5"></i> Resume Lesson
             </button>
         </div>
@@ -66,7 +70,7 @@
 <!-- Row 3: Learning Categories -->
 <!-- <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="fw-bold mb-0">Learning Categories</h5>
-    <a href="#" class="btn btn-view-all">View All</a>
+    <a href="#" class="btn btn-view-all" data-page="lessons" onclick="event.preventDefault(); loadPage('lessons')">View All</a>
 </div> -->
 
 
@@ -79,7 +83,7 @@
             <div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="fw-bold mb-0">My Progress</h6>
-                    <a href="#" class="btn btn-view-all">View Details</a>
+                    <a href="#" class="btn btn-view-all" onclick="event.preventDefault(); loadPage('progress')">View Details</a>
                 </div>
                 <div class="row align-items-center mb-3">
                     <div class="col-5">
@@ -120,7 +124,7 @@
             <div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="fw-bold mb-0">Recent Lessons</h6>
-                    <a href="#" class="btn btn-view-all">View All</a>
+                    <a href="#" class="btn btn-view-all" onclick="event.preventDefault(); loadPage('lessons')">View All</a>
                 </div>
                 <!-- Lesson 1 -->
                 <div class="lesson-row">
@@ -162,7 +166,7 @@
             <div>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="fw-bold mb-0">Achievements</h6>
-                    <a href="#" class="btn btn-view-all">View All</a>
+                    <a href="#" class="btn btn-view-all" onclick="event.preventDefault(); loadPage('achievements')">View All</a>
                 </div>
                 <!-- Award Banner -->
                 <div class="text-center my-2">

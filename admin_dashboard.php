@@ -20,16 +20,6 @@ $adminName = htmlspecialchars($_SESSION['name'] ?? 'Administrator', ENT_QUOTES, 
     <?php include __DIR__ . '/admin_sidebar.php'; ?>
 
     <main class="admin-main">
-        <div class="admin-topbar">
-            <div>
-                <h1>Administrator Dashboard</h1>
-                <p>Welcome, <?= $adminName ?> · System management</p>
-            </div>
-            <a href="logout.php" class="admin-btn admin-btn-danger">
-                <i class="bi bi-box-arrow-right"></i> Logout
-            </a>
-        </div>
-
         <div id="admin-page-content"></div>
     </main>
 </div>

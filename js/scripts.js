@@ -8,6 +8,10 @@ function toggleSidebar() {
 
 // Main page loader that executes script tags in fetched HTML
 function loadPage(pageName) {
+    document.querySelectorAll('.sidelinks[data-page]').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('data-page') === pageName);
+    });
+
     fetch(`student_pages/${pageName}.php`)
         .then(response => {
             if (!response.ok) {
@@ -54,7 +58,7 @@ function loadPage(pageName) {
 
 // Event listeners setup on DOM load
 document.addEventListener('DOMContentLoaded', () => {
-    const navLinks = document.querySelectorAll('.sidelinks');
+    const navLinks = document.querySelectorAll('.sidelinks[data-page]');
 
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -73,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Automatically load initial active page (defaults to dashboard)
-    const activeLink = document.querySelector('.sidelinks.active');
+    const activeLink = document.querySelector('.sidelinks.active[data-page]');
     const initialPage = activeLink ? activeLink.getAttribute('data-page') : 'dashboard';
     
     const pageContent = document.getElementById('page-content');

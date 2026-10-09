@@ -23,21 +23,13 @@ $studentName = htmlspecialchars($_SESSION['name'] ?? 'Student', ENT_QUOTES, 'UTF
     </div>
 
     <main class="content-area">
-        <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom bg-white">
-            <div>
-                <small class="text-muted">Student Portal</small>
-                <h5 class="mb-0 fw-bold">Welcome, <?= $studentName ?>!</h5>
-            </div>
-            <a href="logout.php" class="btn btn-outline-danger btn-sm">
-                <i class="bi bi-box-arrow-right"></i> Logout
-            </a>
-        </div>
 
         <div id="page-content" class="main-content-wrapper"></div>
     </main>
 
 </div>
 
+<script src="js/lesson_script.js"></script>
 <script src="js/scripts.js"></script>
 </body>
 </html>

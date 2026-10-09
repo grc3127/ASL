@@ -16,191 +16,25 @@
  * You can replace the file names below with your actual media.
  */
 
-$quizItems = [
-    [
-        'answer' => 'A',
-        'image'  => 'assets/quiz/images/A.png',
-        'audio'  => 'assets/quiz/audio/A.mp3',
-        'video'  => 'assets/quiz/videos/A.mp4',
-        'label'  => 'Letter A'
-    ],
-    [
-        'answer' => 'B',
-        'image'  => 'assets/quiz/images/B.png',
-        'audio'  => 'assets/quiz/audio/B.mp3',
-        'video'  => 'assets/quiz/videos/B.mp4',
-        'label'  => 'Letter B'
-    ],
-    [
-        'answer' => 'C',
-        'image'  => 'assets/quiz/images/C.png',
-        'audio'  => 'assets/quiz/audio/C.mp3',
-        'video'  => 'assets/quiz/videos/C.mp4',
-        'label'  => 'Letter C'
-    ],
-    [
-        'answer' => 'D',
-        'image'  => 'assets/quiz/images/D.png',
-        'audio'  => 'assets/quiz/audio/D.mp3',
-        'video'  => 'assets/quiz/videos/D.mp4',
-        'label'  => 'Letter D'
-    ],
-    [
-        'answer' => 'E',
-        'image'  => 'assets/quiz/images/E.png',
-        'audio'  => 'assets/quiz/audio/E.mp3',
-        'video'  => 'assets/quiz/videos/E.mp4',
-        'label'  => 'Letter E'
-    ],
-    [
-        'answer' => 'F',
-        'image'  => 'assets/quiz/images/F.png',
-        'audio'  => 'assets/quiz/audio/F.mp3',
-        'video'  => 'assets/quiz/videos/F.mp4',
-        'label'  => 'Letter F'
-    ],
-    [
-        'answer' => 'G',
-        'image'  => 'assets/quiz/images/G.png',
-        'audio'  => 'assets/quiz/audio/G.mp3',
-        'video'  => 'assets/quiz/videos/G.mp4',
-        'label'  => 'Letter G'
-    ],
-    [
-        'answer' => 'H',
-        'image'  => 'assets/quiz/images/H.png',
-        'audio'  => 'assets/quiz/audio/H.mp3',
-        'video'  => 'assets/quiz/videos/H.mp4',
-        'label'  => 'Letter H'
-    ],
-    [
-        'answer' => 'I',
-        'image'  => 'assets/quiz/images/I.png',
-        'audio'  => 'assets/quiz/audio/I.mp3',
-        'video'  => 'assets/quiz/videos/I.mp4',
-        'label'  => 'Letter I'
-    ],
-    [
-        'answer' => 'J',
-        'image'  => 'assets/quiz/images/J.png',
-        'audio'  => 'assets/quiz/audio/J.mp3',
-        'video'  => 'assets/quiz/videos/J.mp4',
-        'label'  => 'Letter J'
-    ],
-    [
-        'answer' => 'K',
-        'image'  => 'assets/quiz/images/K.png',
-        'audio'  => 'assets/quiz/audio/K.mp3',
-        'video'  => 'assets/quiz/videos/K.mp4',
-        'label'  => 'Letter K'
-    ],
-    [
-        'answer' => 'L',
-        'image'  => 'assets/quiz/images/L.png',
-        'audio'  => 'assets/quiz/audio/L.mp3',
-        'video'  => 'assets/quiz/videos/L.mp4',
-        'label'  => 'Letter L'
-    ],
-    [
-        'answer' => 'M',
-        'image'  => 'assets/quiz/images/M.png',
-        'audio'  => 'assets/quiz/audio/M.mp3',
-        'video'  => 'assets/quiz/videos/M.mp4',
-        'label'  => 'Letter M'
-    ],
-    [
-        'answer' => 'N',
-        'image'  => 'assets/quiz/images/N.png',
-        'audio'  => 'assets/quiz/audio/N.mp3',
-        'video'  => 'assets/quiz/videos/N.mp4',
-        'label'  => 'Letter N'
-    ],
-    [
-        'answer' => 'O',
-        'image'  => 'assets/quiz/images/O.png',
-        'audio'  => 'assets/quiz/audio/O.mp3',
-        'video'  => 'assets/quiz/videos/O.mp4',
-        'label'  => 'Letter O'
-    ],
-    [
-        'answer' => 'P',
-        'image'  => 'assets/quiz/images/P.png',
-        'audio'  => 'assets/quiz/audio/P.mp3',
-        'video'  => 'assets/quiz/videos/P.mp4',
-        'label'  => 'Letter P'
-    ],
-    [
-        'answer' => 'Q',
-        'image'  => 'assets/quiz/images/Q.png',
-        'audio'  => 'assets/quiz/audio/Q.mp3',
-        'video'  => 'assets/quiz/videos/Q.mp4',
-        'label'  => 'Letter Q'
-    ],
-    [
-        'answer' => 'R',
-        'image'  => 'assets/quiz/images/R.png',
-        'audio'  => 'assets/quiz/audio/R.mp3',
-        'video'  => 'assets/quiz/videos/R.mp4',
-        'label'  => 'Letter R'
-    ],
-    [
-        'answer' => 'S',
-        'image'  => 'assets/quiz/images/S.png',
-        'audio'  => 'assets/quiz/audio/S.mp3',
-        'video'  => 'assets/quiz/videos/S.mp4',
-        'label'  => 'Letter S'
-    ],
-    [
-        'answer' => 'T',
-        'image'  => 'assets/quiz/images/T.png',
-        'audio'  => 'assets/quiz/audio/T.mp3',
-        'video'  => 'assets/quiz/videos/T.mp4',
-        'label'  => 'Letter T'
-    ],
-    [
-        'answer' => 'U',
-        'image'  => 'assets/quiz/images/U.png',
-        'audio'  => 'assets/quiz/audio/U.mp3',
-        'video'  => 'assets/quiz/videos/U.mp4',
-        'label'  => 'Letter U'
-    ],
-    [
-        'answer' => 'V',
-        'image'  => 'assets/quiz/images/V.png',
-        'audio'  => 'assets/quiz/audio/V.mp3',
-        'video'  => 'assets/quiz/videos/V.mp4',
-        'label'  => 'Letter V'
-    ],
-    [
-        'answer' => 'W',
-        'image'  => 'assets/quiz/images/W.png',
-        'audio'  => 'assets/quiz/audio/W.mp3',
-        'video'  => 'assets/quiz/videos/W.mp4',
-        'label'  => 'Letter W'
-    ],
-    [
-        'answer' => 'X',
-        'image'  => 'assets/quiz/images/X.png',
-        'audio'  => 'assets/quiz/audio/X.mp3',
-        'video'  => 'assets/quiz/videos/X.mp4',
-        'label'  => 'Letter X'
-    ],
-    [
-        'answer' => 'Y',
-        'image'  => 'assets/quiz/images/Y.png',
-        'audio'  => 'assets/quiz/audio/Y.mp3',
-        'video'  => 'assets/quiz/videos/Y.mp4',
-        'label'  => 'Letter Y'
-    ],
-    [
-        'answer' => 'Z',
-        'image'  => 'assets/quiz/images/Z.png',
-        'audio'  => 'assets/quiz/audio/Z.mp3',
-        'video'  => 'assets/quiz/videos/Z.mp4',
-        'label'  => 'Letter Z'
-    ],
-   
-];
+$quizItems = [];
+foreach (range('A', 'Z') as $letter) {
+    $imagePath = 'assets/quiz/images/' . $letter . '.png';
+    $audioPath = 'assets/quiz/audio/' . $letter . '.mp3';
+    $videoPath = 'assets/quiz/videos/' . $letter . '.mp4';
+
+    // Build the quiz from the image files included with the current project.
+    if (is_file(__DIR__ . '/../' . $imagePath)) {
+        $quizItems[] = [
+            'answer' => $letter,
+            'image' => $imagePath,
+            'audio' => $audioPath,
+            'audioAvailable' => is_file(__DIR__ . '/../' . $audioPath),
+            'video' => $videoPath,
+            'videoAvailable' => is_file(__DIR__ . '/../' . $videoPath),
+            'label' => 'Letter ' . $letter,
+        ];
+    }
+}
 
 shuffle($quizItems);
 ?>
@@ -527,6 +361,8 @@ shuffle($quizItems);
     display: block;
 }
 
+.video-notice { margin: 10px 0; padding: 12px; border-radius: 12px; background: #fff4cf; color: #795600; font-size: .9rem; font-weight: 700; }
+
 .video-panel-title {
     margin-bottom: 9px;
     font-size: .85rem;
@@ -686,9 +522,8 @@ shuffle($quizItems);
                 <audio id="questionAudio" preload="metadata"></audio>
 
                 <div class="video-panel" id="videoPanel">
-                    <div class="video-panel-title">
-                        Sign-language video
-                    </div>
+                    <div class="video-panel-title">Sign-language video</div>
+                    <p id="videoNotice" class="video-notice" role="status" hidden></p>
                     <video
                         id="questionVideo"
                         class="quiz-video"
@@ -845,15 +680,19 @@ shuffle($quizItems);
          */
         questionAudio.pause();
         questionAudio.currentTime = 0;
-        questionAudio.src = item.audio;
+        questionAudio.removeAttribute('src');
+        if (item.audioAvailable) questionAudio.src = item.audio;
 
-        /*
-         * Prepare video.
-         */
+        // Video files are optional in this project version. Explain when one
+        // has not been supplied instead of leaving a broken player visible.
         questionVideo.pause();
-        questionVideo.src = item.video;
+        questionVideo.removeAttribute('src');
+        if (item.videoAvailable) questionVideo.src = item.video;
         questionVideo.load();
         videoPanel.classList.remove('show');
+        const videoNotice = document.getElementById('videoNotice');
+        videoNotice.hidden = true;
+        videoNotice.textContent = '';
 
         /*
          * Reset feedback and next button.
@@ -994,29 +833,41 @@ shuffle($quizItems);
     }
 
     audioButton.addEventListener('click', function () {
-        if (!questionAudio.src) {
+        const item = quizItems[currentQuestion];
+        if (item.audioAvailable && questionAudio.src) {
+            questionAudio.currentTime = 0;
+            questionAudio.play().catch(function () {});
             return;
         }
 
-        questionAudio.currentTime = 0;
-        questionAudio.play().catch(function () {
-            /*
-             * Some browsers block audio until a user interaction.
-             * This button itself is a user interaction, so normally
-             * playback will be allowed.
-             */
-        });
+        // Audio clips are not bundled yet; use the browser's speech voice as
+        // a useful fallback for the letter name, where supported.
+        if ('speechSynthesis' in window && 'SpeechSynthesisUtterance' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance('Letter ' + item.answer);
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        } else {
+            const videoNotice = document.getElementById('videoNotice');
+            videoPanel.classList.add('show');
+            videoNotice.hidden = false;
+            videoNotice.textContent = 'No audio file is installed for this letter, and speech playback is not supported by this browser.';
+        }
     });
 
     videoButton.addEventListener('click', function () {
+        const item = quizItems[currentQuestion];
         videoPanel.classList.add('show');
-
-        questionVideo.play().catch(function () {
-            /*
-             * The video remains available through its controls
-             * if autoplay is restricted by the browser.
-             */
-        });
+        const videoNotice = document.getElementById('videoNotice');
+        if (!item.videoAvailable) {
+            videoNotice.hidden = false;
+            videoNotice.textContent = 'The sign demonstration video for Letter ' + item.answer + ' has not been added yet. Add a matching MP4 file under assets/quiz/videos/ to enable it.';
+            questionVideo.removeAttribute('src');
+            questionVideo.load();
+            return;
+        }
+        videoNotice.hidden = true;
+        questionVideo.play().catch(function () {});
     });
 
     nextButton.addEventListener('click', nextQuestion);
