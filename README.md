@@ -3,6 +3,7 @@ https://docs.google.com/spreadsheets/d/1tGgXoFbHq1CAuQ9vMf2qdTkgW9G8tR5gsPTttuam
 **Main Page**: index.php
 
 **User Credentials**:
+<<<<<<< HEAD
   Admin:
         user: a
         pass: a
@@ -12,3 +13,16 @@ https://docs.google.com/spreadsheets/d/1tGgXoFbHq1CAuQ9vMf2qdTkgW9G8tR5gsPTttuam
   student:
         user: c
         pass: c
+=======
+admin:
+user: a
+pass: a
+
+teacher:
+user: b
+pass: b
+
+student:
+user: c
+pass: c
+>>>>>>> dbcc241 (Fix merge conflicts)
