@@ -120,8 +120,11 @@ unset($_SESSION['login_error']);
             <div class="mb-3">
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                    <input type="password" name="password" class="form-control"
+                    <input type="password" name="password" id="passwordInput" class="form-control"
                            placeholder="Password" required autocomplete="current-password">
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                    </button>
                 </div>
             </div>
 
@@ -173,6 +176,18 @@ document.addEventListener("DOMContentLoaded", () => {
             roleLabel.textContent =
                 button.dataset.role.charAt(0).toUpperCase() + button.dataset.role.slice(1);
         });
+    });
+
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("passwordInput");
+    const togglePasswordIcon = document.getElementById("togglePasswordIcon");
+
+    togglePasswordBtn.addEventListener("click", () => {
+        const isPassword = passwordInput.getAttribute("type") === "password";
+        passwordInput.setAttribute("type", isPassword ? "text" : "password");
+        
+        togglePasswordIcon.classList.toggle("bi-eye");
+        togglePasswordIcon.classList.toggle("bi-eye-slash");
     });
 });
 </script>
