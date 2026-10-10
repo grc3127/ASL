@@ -57,7 +57,7 @@ try {
         $percent = $status === 'completed' ? 100 : 1;
         $upsert = $pdo->prepare("INSERT INTO student_progress (student_id, lesson_id, status, progress_percent, last_accessed, completed_at)
             VALUES (?, ?, ?, ?, NOW(), " . ($status === 'completed' ? 'NOW()' : 'NULL') . ")
-            ON DUPLICATE KEY UPDATE status=VALUES(status), progress_percent=GREATEST(progress_percent, VALUES(progress_percent)), last_accessed=NOW(), completed_at=IF(VALUES(status)='completed', COALESCE(completed_at,NOW()), completed_at)");
+            ON DUPLICATE KEY UPDATE status=IF(status='completed','completed',VALUES(status)), progress_percent=GREATEST(progress_percent, VALUES(progress_percent)), last_accessed=NOW(), completed_at=IF(VALUES(status)='completed', COALESCE(completed_at,NOW()), completed_at)");
         $upsert->execute([$studentId, $lessonId, $status, $percent]);
         respond(['success'=>true,'message'=>'Progress saved.']);
     }
