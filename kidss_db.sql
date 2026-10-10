@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2026 at 04:00 PM
+-- Generation Time: Oct 10, 2026 at 08:44 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -167,6 +167,14 @@ CREATE TABLE `lessons` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `lessons`
+--
+
+INSERT INTO `lessons` (`lesson_id`, `category_id`, `title`, `description`, `thumbnail`, `display_order`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 'A', NULL, NULL, 0, 'published', '2026-10-10 13:23:11', '2026-10-10 13:33:00'),
+(2, 1, 'B', NULL, NULL, 0, 'published', '2026-10-10 14:36:30', '2026-10-10 14:36:30');
 
 -- --------------------------------------------------------
 
@@ -423,9 +431,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password_hash`, `role_id`, `status_id`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'a', 'a@gmail.com', '$2y$12$KgSzkBpnZXa70u2wexZbVOYPi0SGOzPlCWk.Uc4piGUoSP2yuX/ha', 1, 1, '2026-10-04 14:33:59', '2026-10-04 14:43:08', '2026-10-04 14:43:08'),
-(3, 'b', 'b@gmail.com', '$2y$12$qGbHfN5UDCU6imXQQYMlyO0BX3jfFgVhMUoLURJHtWc/2aTn.xXH.', 2, 1, '2026-10-04 14:45:05', '2026-10-04 14:45:05', NULL),
-(4, 'c', 'c@gmail.com', '$2y$12$/BTsq9gUVPLRSrYnNNRwBenPdZkaq8dkgdJJ1yYTO6ApqAJrcKCRq', 3, 1, '2026-10-04 14:45:37', '2026-10-04 14:45:37', NULL);
+(1, 'a', 'a@gmail.com', '$2y$12$KgSzkBpnZXa70u2wexZbVOYPi0SGOzPlCWk.Uc4piGUoSP2yuX/ha', 1, 1, '2026-10-04 14:33:59', '2026-10-10 14:34:40', '2026-10-10 14:34:40'),
+(3, 'b', 'b@gmail.com', '$2y$12$qGbHfN5UDCU6imXQQYMlyO0BX3jfFgVhMUoLURJHtWc/2aTn.xXH.', 2, 1, '2026-10-04 14:45:05', '2026-10-09 22:32:58', '2026-10-09 22:32:58'),
+(4, 'c', 'c@gmail.com', '$2y$12$/BTsq9gUVPLRSrYnNNRwBenPdZkaq8dkgdJJ1yYTO6ApqAJrcKCRq', 3, 1, '2026-10-04 14:45:37', '2026-10-10 14:36:49', '2026-10-10 14:36:49');
 
 --
 -- Indexes for dumped tables
@@ -653,7 +661,7 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT for table `lessons`
 --
 ALTER TABLE `lessons`
-  MODIFY `lesson_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `lesson_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `lesson_categories`
