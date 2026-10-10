@@ -76,6 +76,7 @@
 
         const playButton = event.target.closest('.lesson-play');
         if (playButton) {
+            if (playButton.hasAttribute('data-open-lesson')) return;
             event.preventDefault();
             if (playButton.classList.contains('locked-play')) {
                 showLessonMessage('This lesson is not available yet.');
@@ -89,6 +90,7 @@
 
         const nextButton = event.target.closest('.lesson-next');
         if (nextButton) {
+            if (nextButton.hasAttribute('data-open-lesson')) return;
             event.preventDefault();
             const card = nextButton.closest('.lesson-card');
             const lesson = card?.querySelector('.lesson-name-row h2')?.textContent?.trim() || 'this lesson';
