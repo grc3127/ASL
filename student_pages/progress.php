@@ -9,7 +9,7 @@ try {
  $publishedTotal=(int)$pdo->query("SELECT COUNT(*) FROM lessons WHERE status='published'")->fetchColumn();
  if($studentId){
   $stmt=$pdo->prepare("SELECT COUNT(*) FROM student_progress p INNER JOIN lessons l ON l.lesson_id=p.lesson_id WHERE p.student_id=? AND p.status='completed' AND l.status='published'");$stmt->execute([$studentId]);$completedTotal=(int)$stmt->fetchColumn();
-  $stmt=$pdo->prepare("SELECT COUNT(*), AVG(percentage) FROM quiz_attempts WHERE student_id=? AND completed_at IS NOT NULL");$stmt->execute([$studentId]);$quizRow=$stmt->fetch();$quizAttempts=(int)$quizRow['COUNT(*)'];$quizAverage=$quizRow['AVG(percentage)']===null?null:(int)round((float)$quizRow['AVG(percentage)']);
+  $stmt=$pdo->prepare("SELECT COUNT(*) AS attempts, AVG(percentage) AS avg_percentage FROM quiz_attempts WHERE student_id=? AND completed_at IS NOT NULL");$stmt->execute([$studentId]);$quizRow=$stmt->fetch();$quizAttempts=(int)$quizRow['attempts'];$quizAverage=$quizRow['avg_percentage']===null?null:(int)round((float)$quizRow['avg_percentage']);
   $stmt=$pdo->prepare('SELECT COUNT(*) FROM student_achievements WHERE student_id=?');$stmt->execute([$studentId]);$achievementTotal=(int)$stmt->fetchColumn();
   $stmt=$pdo->prepare("SELECT c.category_id,c.category_name,COUNT(l.lesson_id) AS total_lessons,SUM(CASE WHEN p.status='completed' THEN 1 ELSE 0 END) AS completed_lessons
     FROM lesson_categories c LEFT JOIN lessons l ON l.category_id=c.category_id AND l.status='published'
