@@ -1,631 +1,163 @@
 <?php
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
-$studentDisplayName = htmlspecialchars((string)($_SESSION['name'] ?? 'Student'), ENT_QUOTES, 'UTF-8');
+require_once __DIR__ . '/../auth/guard.php';
+requireRole('student');
+$studentName = htmlspecialchars((string)($_SESSION['name'] ?? 'Student'), ENT_QUOTES, 'UTF-8');
 ?>
 <div class="lessons-page-body">
-    <!-- Header / Welcome & User Bar -->
-    <div class="row align-items-center mb-4 g-3">
-        <div class="col-12 col-md-6">
-            <div class="lesson-heading">
-                <div class="lesson-title-art">
-                    <span class="lesson-title-letter">A</span>
-                    <span class="title-sparkle ts-one">✦</span>
-                    <span class="title-sparkle ts-two">✦</span>
-                </div>
-                <div>
-                    <h1>Alphabet</h1>
-                    <p>Learn A–Z signs in a fun and easy way!</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 d-flex justify-content-md-end align-items-center gap-3">
-            <!-- <div class="header-icon-pill">
-                <i class="bi bi-bell-fill text-warning fs-5"></i>
-                <span class="badge-count">3</span>
-            </div>
-            <div class="header-icon-pill">
-                <i class="bi bi-star-fill text-warning fs-5"></i>
-                <span class="badge-count" style="background: #f59e0b;">12</span>
-            </div> -->
-            <div class="profile-pill d-flex align-items-center">
-                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=<?= rawurlencode((string)($_SESSION['name'] ?? 'Student')) ?>" alt="Student avatar" class="user-avatar">
-                <div class="lh-1 me-2">
-                    <div class="fw-bold fs-6"><?= $studentDisplayName ?></div>
-                    <small class="text-muted" style="font-size: 0.75rem;"></small>
-                </div>
-                <i></i>
-            </div>
-        </div>
+  <div class="row align-items-center mb-4 g-3">
+    <div class="col-12 col-md-7">
+      <div class="lesson-heading">
+        <div class="lesson-title-art"><span class="lesson-title-letter">K</span><span class="title-sparkle ts-one">✦</span><span class="title-sparkle ts-two">✦</span></div>
+        <div><h1>My Lessons</h1><p>Explore the sign-language lessons your teacher has published.</p></div>
+      </div>
     </div>
-
-    <!-- Start of Lessons Page Content -->
-    <div class="lesson-page">
-
-        <!-- ALPHABET CATEGORY -->
-        <section class="lesson-category collapsible-category">
-            <button
-                class="lesson-category-bar category-toggle"
-                type="button"
-                data-target="alphabetLessons"
-                aria-expanded="true"
-                aria-controls="alphabetLessons">
-
-                <div class="lesson-category-info">
-                    <div class="lesson-book-icon">
-                        <i class="bi bi-alphabet-uppercase"></i>
-                    </div>
-                    <div>
-                        <h3>Alphabet</h3>
-                        <span>26 Lessons</span>
-                    </div>
-                </div>
-
-                <div class="lesson-progress-wrap">
-                    <div class="lesson-progress-label">
-                        <strong>6 / 26</strong> Completed
-                    </div>
-                    <div class="lesson-progress">
-                        <div class="lesson-progress-fill" style="width: 23%;"></div>
-                    </div>
-                </div>
-
-                <span class="category-chevron" aria-hidden="true">
-                    <i class="bi bi-chevron-up"></i>
-                </span>
-            </button>
-
-            <div id="alphabetLessons" class="category-content is-open">
-                <div class="lesson-grid" id="alphabetGrid">
-                    <!-- Letter A -->
-                    <article class="lesson-card completed">
-                        <div class="lesson-card-art art-red">
-                            <span class="lesson-letter">A</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play" aria-label="Play Letter A"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row">
-                                    <h2>Letter A</h2>
-                                    <i class="bi bi-star-fill lesson-star earned"></i>
-                                </div>
-                                <p>Learn the sign for A</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:15</span>
-                                <div class="lesson-status completed-status"><i class="bi bi-check-circle-fill"></i> Completed</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter A"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter B -->
-                    <article class="lesson-card completed">
-                        <div class="lesson-card-art art-blue">
-                            <span class="lesson-letter">B</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play" aria-label="Play Letter B"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row">
-                                    <h2>Letter B</h2>
-                                    <i class="bi bi-star-fill lesson-star earned"></i>
-                                </div>
-                                <p>Learn the sign for B</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:10</span>
-                                <div class="lesson-status completed-status"><i class="bi bi-check-circle-fill"></i> Completed</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter B"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter C -->
-                    <article class="lesson-card in-progress">
-                        <div class="lesson-card-art art-yellow">
-                            <span class="lesson-letter">C</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play" aria-label="Play Letter C"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row">
-                                    <h2>Letter C</h2>
-                                    <i class="bi bi-star-fill lesson-star earned"></i>
-                                </div>
-                                <p>Learn the sign for C</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:08</span>
-                                <div class="lesson-status progress-status"><i class="bi bi-lock-fill"></i> In Progress</div>
-                            </div>
-                            <div class="lesson-percent">60%</div>
-                            <button class="lesson-next" aria-label="Open Letter C"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter D -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-green">
-                            <span class="lesson-letter">D</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter D locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row">
-                                    <h2>Letter D</h2>
-                                    <i class="bi bi-star-fill lesson-star"></i>
-                                </div>
-                                <p>Learn the sign for D</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:12</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter D"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter E -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-red">
-                            <span class="lesson-letter">E</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter E locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter E</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for E</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:05</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter E"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter F -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-blue">
-                            <span class="lesson-letter">F</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter F locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter F</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for F</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:18</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter F"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter G -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-yellow">
-                            <span class="lesson-letter">G</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter G locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter G</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for G</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:14</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter G"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter H -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-green">
-                            <span class="lesson-letter">H</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter H locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter H</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for H</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:11</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter H"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter I -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-red">
-                            <span class="lesson-letter">I</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter I locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter I</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for I</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:09</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter I"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter J -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-blue">
-                            <span class="lesson-letter">J</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter J locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter J</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for J</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:16</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter J"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter K -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-yellow">
-                            <span class="lesson-letter">K</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter K locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter K</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for K</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:13</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter K"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter L -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-green">
-                            <span class="lesson-letter">L</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter L locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter L</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for L</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:10</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter L"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter M -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-red">
-                            <span class="lesson-letter">M</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter M locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter M</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for M</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:15</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter M"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter N -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-blue">
-                            <span class="lesson-letter">N</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter N locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter N</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for N</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:07</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter N"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter O -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-yellow">
-                            <span class="lesson-letter">O</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter O locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter O</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for O</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:12</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter O"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter P -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-green">
-                            <span class="lesson-letter">P</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter P locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter P</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for P</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:14</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter P"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter Q -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-red">
-                            <span class="lesson-letter">Q</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter Q locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter Q</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for Q</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:19</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter Q"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter R -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-blue">
-                            <span class="lesson-letter">R</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter R locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter R</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for R</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:11</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter R"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter S -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-yellow">
-                            <span class="lesson-letter">S</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter S locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter S</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for S</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:08</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter S"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter T -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-green">
-                            <span class="lesson-letter">T</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter T locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter T</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for T</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:13</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter T"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter U -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-red">
-                            <span class="lesson-letter">U</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter U locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter U</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for U</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:15</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter U"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter V -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-blue">
-                            <span class="lesson-letter">V</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter V locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter V</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for V</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:10</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter V"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter W -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-yellow">
-                            <span class="lesson-letter">W</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter W locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter W</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for W</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:17</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter W"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter X -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-green">
-                            <span class="lesson-letter">X</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter X locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter X</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for X</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:12</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter X"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter Y -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-red">
-                            <span class="lesson-letter">Y</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter Y locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter Y</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for Y</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:14</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter Y"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-
-                    <!-- Letter Z -->
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-blue">
-                            <span class="lesson-letter">Z</span>
-                            <span class="lesson-child girl">👧🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Letter Z locked"><i class="bi bi-play-fill"></i></button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row"><h2>Letter Z</h2><i class="bi bi-star-fill lesson-star"></i></div>
-                                <p>Learn the sign for Z</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:20</span>
-                                <div class="lesson-status locked-status"><i class="bi bi-lock-fill"></i> Not Started</div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Letter Z"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-                </div>
-
-                <nav class="lesson-pagination" id="alphabetPagination" aria-label="Alphabet lesson pages">
-                    <!-- Dynamic page numbers generated by JS -->
-                </nav>
-            </div>
-        </section>
-
-        <!-- GREETINGS CATEGORY -->
-        <section class="lesson-category collapsible-category">
-            <button
-                class="lesson-category-bar category-toggle"
-                type="button"
-                data-target="greetingsLessons"
-                aria-expanded="false"
-                aria-controls="greetingsLessons">
-
-                <div class="lesson-category-info">
-                    <div class="lesson-book-icon">
-                        <i class="bi bi-chat-heart-fill"></i>
-                    </div>
-                    <div>
-                        <h3>Greetings</h3>
-                        <span>4 Lessons</span>
-                    </div>
-                </div>
-
-                <div class="lesson-progress-wrap">
-                    <div class="lesson-progress-label">
-                        <strong>0 / 4</strong> Completed
-                    </div>
-                    <div class="lesson-progress">
-                        <div class="lesson-progress-fill" style="width: 0%;"></div>
-                    </div>
-                </div>
-
-                <span class="category-chevron" aria-hidden="true">
-                    <i class="bi bi-chevron-down"></i>
-                </span>
-            </button>
-
-            <div id="greetingsLessons" class="category-content" hidden>
-                <div class="lesson-grid">
-                    <article class="lesson-card not-started">
-                        <div class="lesson-card-art art-red">
-                            <span class="lesson-letter">👋</span>
-                            <span class="lesson-child boy">👦🏻</span>
-                            <button class="lesson-play locked-play" aria-label="Play Hello">
-                                <i class="bi bi-play-fill"></i>
-                            </button>
-                        </div>
-                        <div class="lesson-card-body">
-                            <div class="lesson-main-copy">
-                                <div class="lesson-name-row">
-                                    <h2>Hello</h2>
-                                    <i class="bi bi-star-fill lesson-star"></i>
-                                </div>
-                                <p>Learn the sign for Hello</p>
-                                <span class="lesson-duration"><i class="bi bi-clock"></i> 02:10</span>
-                                <div class="lesson-status locked-status">
-                                    <i class="bi bi-lock-fill"></i> Not Started
-                                </div>
-                            </div>
-                            <button class="lesson-next" aria-label="Open Hello"><i class="bi bi-chevron-right"></i></button>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
+    <div class="col-12 col-md-5 d-flex justify-content-md-end align-items-center">
+      <div class="profile-pill d-flex align-items-center">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=<?= rawurlencode((string)($_SESSION['name'] ?? 'Student')) ?>" alt="Student avatar" class="user-avatar">
+        <div class="lh-1 me-2"><div class="fw-bold fs-6"><?= $studentName ?></div><small class="text-muted">Student</small></div>
+      </div>
     </div>
+  </div>
+  <div id="studentLessonNotice" class="alert d-none" role="status"></div>
+  <div id="studentLessonSummary" class="mb-3 text-muted small" aria-live="polite">Loading published lessons…</div>
+  <div id="studentLessonCategories">
+    <div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading</span></div><p class="mt-3 text-muted">Loading your lessons…</p></div>
+  </div>
+  <div id="studentLessonEmpty" class="admin-card text-center py-5 d-none">
+    <i class="bi bi-journal-bookmark fs-1 text-muted"></i>
+    <h3 class="mt-3">No published lessons yet</h3>
+    <p class="text-muted mb-0">Your lessons will appear here after a teacher or administrator publishes them.</p>
+  </div>
+  <div id="studentLessonPlayer" class="modal fade" tabindex="-1" aria-labelledby="studentLessonPlayerTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><div><h5 class="modal-title" id="studentLessonPlayerTitle">Lesson</h5><p id="studentLessonPlayerDescription" class="text-muted small mb-0"></p></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body" id="studentLessonPlayerBody"></div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button><button type="button" class="btn btn-success" id="studentLessonCompleteBtn">Mark as completed</button></div>
+    </div></div>
+  </div>
 </div>
-
-<script src="js/lesson_script.js"></script>
+<script>
+(function () {
+  const endpoint = 'api/lesson_management.php';
+  const root = document.getElementById('studentLessonCategories');
+  if (!root || root.dataset.bound === 'true') return;
+  root.dataset.bound = 'true';
+  const summary = document.getElementById('studentLessonSummary');
+  const empty = document.getElementById('studentLessonEmpty');
+  const notice = document.getElementById('studentLessonNotice');
+  let activeLesson = null;
+  let player = null;
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  function showNotice(message, type='info') {
+    notice.className = 'alert alert-' + type;
+    notice.textContent = message;
+    notice.classList.remove('d-none');
+  }
+  function mediaFor(lesson, type) { return (lesson.media || []).find(media => media.media_type === type)?.file_path || ''; }
+  function lessonCard(lesson, index) {
+    const image = lesson.thumbnail || mediaFor(lesson, 'image');
+    const completed = lesson.progress_status === 'completed';
+    const artClasses = ['art-red','art-blue','art-yellow','art-green'];
+    const visual = image
+      ? '<img src="' + escapeHtml(image) + '" alt="' + escapeHtml(lesson.title) + '" style="width:100%;height:100%;object-fit:contain;padding:12px">'
+      : '<span class="lesson-letter">' + escapeHtml(lesson.title.length <= 2 ? lesson.title : '✋') + '</span>';
+    return '<article class="lesson-card ' + (completed ? 'completed' : 'not-started') + '">' +
+      '<div class="lesson-card-art ' + artClasses[index % artClasses.length] + '">' + visual +
+      '<button type="button" class="lesson-play" data-open-lesson="' + Number(lesson.lesson_id) + '" aria-label="Open ' + escapeHtml(lesson.title) + '"><i class="bi bi-play-fill"></i></button></div>' +
+      '<div class="lesson-card-body"><div class="lesson-main-copy"><div class="lesson-name-row"><h2>' + escapeHtml(lesson.title) + '</h2><i class="bi bi-star-fill lesson-star ' + (completed ? 'earned' : '') + '"></i></div>' +
+      '<p>' + escapeHtml(lesson.description || 'Practice this sign.') + '</p><div class="lesson-status ' + (completed ? 'completed-status' : 'locked-status') + '"><i class="bi ' + (completed ? 'bi-check-circle-fill' : 'bi-bookmark') + '"></i> ' + (completed ? 'Completed' : 'Available') + '</div></div>' +
+      '<button type="button" class="lesson-next" data-open-lesson="' + Number(lesson.lesson_id) + '" aria-label="Open ' + escapeHtml(lesson.title) + '"><i class="bi bi-chevron-right"></i></button></div></article>';
+  }
+  function render(data) {
+    const categories = data.categories || [];
+    const lessons = data.lessons || [];
+    const byCategory = new Map();
+    lessons.forEach(lesson => {
+      const key = String(lesson.category_id);
+      if (!byCategory.has(key)) byCategory.set(key, []);
+      byCategory.get(key).push(lesson);
+    });
+    const groups = categories.map(category => ({category, lessons: byCategory.get(String(category.category_id)) || []})).filter(group => group.lessons.length);
+    summary.textContent = lessons.length + ' published lesson' + (lessons.length === 1 ? '' : 's') + ' in ' + groups.length + ' categor' + (groups.length === 1 ? 'y' : 'ies');
+    empty.classList.toggle('d-none', lessons.length > 0);
+    if (!lessons.length) { root.innerHTML = ''; return; }
+    root.innerHTML = groups.map((group, groupIndex) => {
+      const id = 'publishedLessonCategory' + group.category.category_id;
+      const completedCount = group.lessons.filter(lesson => lesson.progress_status === 'completed').length;
+      const pct = Math.round(completedCount / group.lessons.length * 100);
+      return '<section class="lesson-category collapsible-category mb-4"><button class="lesson-category-bar category-toggle" type="button" data-target="' + id + '" aria-expanded="' + (groupIndex === 0 ? 'true' : 'false') + '" aria-controls="' + id + '">' +
+        '<div class="lesson-category-info"><div class="lesson-book-icon"><i class="bi bi-book-half"></i></div><div><h3>' + escapeHtml(group.category.category_name) + '</h3><span>' + group.lessons.length + ' published lesson' + (group.lessons.length === 1 ? '' : 's') + '</span></div></div>' +
+        '<div class="lesson-progress-wrap"><div class="lesson-progress-label"><strong>' + completedCount + ' / ' + group.lessons.length + '</strong> Completed</div><div class="lesson-progress"><div class="lesson-progress-fill" style="width:' + pct + '%"></div></div></div>' +
+        '<span class="category-chevron" aria-hidden="true"><i class="bi ' + (groupIndex === 0 ? 'bi-chevron-up' : 'bi-chevron-down') + '"></i></span></button>' +
+        '<div id="' + id + '" class="category-content ' + (groupIndex === 0 ? 'is-open' : '') + '" ' + (groupIndex === 0 ? '' : 'hidden') + '><div class="lesson-grid">' +
+        group.lessons.map((lesson,index) => lessonCard(lesson,index)).join('') + '</div></div></section>';
+    }).join('');
+  }
+  async function loadLessons() {
+    try {
+      const response = await fetch(endpoint, {credentials:'same-origin', headers:{'Accept':'application/json'}});
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || 'Could not load lessons.');
+      const progressResponse = await fetch('api/lesson_progress.php', {credentials:'same-origin', headers:{'Accept':'application/json'}});
+      if (progressResponse.ok) {
+        const progress = await progressResponse.json();
+        if (progress.success) {
+          const lookup = new Map((progress.progress || []).map(item => [String(item.lesson_id), item]));
+          data.lessons.forEach(lesson => { const item = lookup.get(String(lesson.lesson_id)); lesson.progress_status = item?.status || 'not_started'; });
+        }
+      }
+      render(data);
+    } catch (error) {
+      root.innerHTML = '';
+      showNotice(error.message || 'Unable to load published lessons. Check your database connection.', 'danger');
+      summary.textContent = 'Lessons could not be loaded.';
+    }
+  }
+  async function saveProgress(status) {
+    if (!activeLesson) return;
+    const response = await fetch(endpoint, {method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({action:'progress',lesson_id:Number(activeLesson.lesson_id),status})});
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.message || 'Unable to save progress.');
+  }
+  async function openLesson(id) {
+    try {
+      const response = await fetch(endpoint, {credentials:'same-origin',headers:{'Accept':'application/json'}});
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || 'Unable to open lesson.');
+      activeLesson = data.lessons.find(item => Number(item.lesson_id) === Number(id));
+      if (!activeLesson) throw new Error('This lesson is no longer published.');
+      await saveProgress('in_progress');
+      document.getElementById('studentLessonPlayerTitle').textContent = activeLesson.title;
+      document.getElementById('studentLessonPlayerDescription').textContent = activeLesson.description || '';
+      const body = document.getElementById('studentLessonPlayerBody');
+      const image = activeLesson.thumbnail || mediaFor(activeLesson,'image');
+      const audio = mediaFor(activeLesson,'audio');
+      const video = mediaFor(activeLesson,'video');
+      body.innerHTML = (image ? '<div class="text-center mb-3"><img src="' + escapeHtml(image) + '" alt="' + escapeHtml(activeLesson.title) + '" style="max-width:100%;max-height:360px;object-fit:contain"></div>' : '') +
+        (video ? '<div class="mb-3"><video controls playsinline class="w-100" style="max-height:420px" src="' + escapeHtml(video) + '"></video></div>' : '') +
+        (audio ? '<div class="mb-3"><label class="form-label fw-bold">Listen to the lesson audio</label><audio controls class="w-100" src="' + escapeHtml(audio) + '"></audio></div>' : '') +
+        (!image && !audio && !video ? '<div class="alert alert-light">Your teacher has published this lesson, but has not added media yet.</div>' : '') +
+        '<p class="mb-0">' + escapeHtml(activeLesson.description || 'Practice the sign, then mark the lesson as completed when you are ready.') + '</p>';
+      if (window.bootstrap && bootstrap.Modal) {
+        player = bootstrap.Modal.getOrCreateInstance(document.getElementById('studentLessonPlayer'));
+        player.show();
+      } else {
+        body.insertAdjacentHTML('afterbegin','<div class="alert alert-warning">Modal library unavailable. Lesson content is displayed below.</div>');
+      }
+    } catch(error) { showNotice(error.message || 'Unable to open this lesson.', 'danger'); }
+  }
+  root.addEventListener('click', event => {
+    const button = event.target.closest('[data-open-lesson]');
+    if (button) { event.preventDefault(); openLesson(button.dataset.openLesson); }
+  });
+  document.getElementById('studentLessonCompleteBtn').addEventListener('click', async () => {
+    try {
+      await saveProgress('completed');
+      showNotice('Lesson completed! Your progress has been saved.', 'success');
+      if (player) player.hide();
+      await loadLessons();
+    } catch(error) { showNotice(error.message || 'Unable to save your progress.', 'danger'); }
+  });
+  loadLessons();
+})();
+</script>
