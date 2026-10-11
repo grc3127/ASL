@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 11, 2026 at 02:39 PM
+-- Generation Time: Oct 11, 2026 at 02:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -96,7 +96,26 @@ INSERT INTO `activity_logs` (`log_id`, `user_id`, `action`, `description`, `ip_a
 (3, 1, 'login', 'Successful login', '::1', '2026-10-11 20:36:17'),
 (4, 1, 'lesson_category_created', 'Created lesson category Basic Expression', '::1', '2026-10-11 20:36:28'),
 (5, 1, 'lesson_created', 'Created lesson Hello (published)', '::1', '2026-10-11 20:36:46'),
-(6, 4, 'login', 'Successful login', '::1', '2026-10-11 20:36:52');
+(6, 4, 'login', 'Successful login', '::1', '2026-10-11 20:36:52'),
+(7, 1, 'login', 'Successful login', '::1', '2026-10-11 20:40:50'),
+(8, 4, 'login', 'Successful login', '::1', '2026-10-11 20:41:11'),
+(9, 3, 'login', 'Successful login', '::1', '2026-10-11 20:41:27'),
+(10, 4, 'login', 'Successful login', '::1', '2026-10-11 20:46:22'),
+(11, 1, 'login', 'Successful login', '::1', '2026-10-11 20:46:53'),
+(12, 1, 'account_created', 'Created student account for Student1 Lastname', '::1', '2026-10-11 20:47:29'),
+(13, 1, 'account_created', 'Created teacher account for first name', '::1', '2026-10-11 20:47:47'),
+(14, 1, 'class_saved', 'Saved class Kinder1 -  (2026-2027)', '::1', '2026-10-11 20:48:04'),
+(15, 1, 'student_enrolled', 'Student 1 assigned to class 1', '::1', '2026-10-11 20:48:13'),
+(16, 1, 'lesson_updated', 'Updated lesson Hello (draft)', '::1', '2026-10-11 20:48:34'),
+(17, 5, 'login', 'Successful login', '::1', '2026-10-11 20:48:56'),
+(18, 6, 'login', 'Successful login', '::1', '2026-10-11 20:49:19'),
+(19, 3, 'login', 'Successful login', '::1', '2026-10-11 20:52:33'),
+(20, 1, 'login', 'Successful login', '::1', '2026-10-11 20:52:38'),
+(21, 4, 'login', 'Successful login', '::1', '2026-10-11 20:52:51'),
+(22, 1, 'login', 'Successful login', '::1', '2026-10-11 20:53:02'),
+(23, 1, 'lesson_updated', 'Updated lesson Hello (published)', '::1', '2026-10-11 20:53:10'),
+(24, 4, 'login', 'Successful login', '::1', '2026-10-11 20:53:24'),
+(25, 1, 'login', 'Successful login', '::1', '2026-10-11 20:55:46');
 
 -- --------------------------------------------------------
 
@@ -139,6 +158,13 @@ CREATE TABLE `classes` (
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `classes`
+--
+
+INSERT INTO `classes` (`class_id`, `teacher_id`, `class_name`, `grade_level`, `section`, `school_year`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Kinder1', NULL, NULL, '2026-2027', 'active', '2026-10-11 20:48:04', '2026-10-11 20:48:04');
+
 -- --------------------------------------------------------
 
 --
@@ -152,6 +178,13 @@ CREATE TABLE `class_students` (
   `enrolled_at` datetime NOT NULL DEFAULT current_timestamp(),
   `status` enum('active','inactive') NOT NULL DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `class_students`
+--
+
+INSERT INTO `class_students` (`class_student_id`, `class_id`, `student_id`, `enrolled_at`, `status`) VALUES
+(1, 1, 1, '2026-10-11 20:48:13', 'active');
 
 -- --------------------------------------------------------
 
@@ -194,7 +227,7 @@ CREATE TABLE `lessons` (
 INSERT INTO `lessons` (`lesson_id`, `category_id`, `title`, `description`, `thumbnail`, `display_order`, `status`, `created_at`, `updated_at`) VALUES
 (1, 1, 'A', NULL, NULL, 0, 'published', '2026-10-10 13:23:11', '2026-10-10 13:33:00'),
 (2, 1, 'B', NULL, NULL, 0, 'published', '2026-10-10 14:36:30', '2026-10-10 14:36:30'),
-(3, 6, 'Hello', NULL, NULL, 0, 'published', '2026-10-11 20:36:46', '2026-10-11 20:36:46');
+(3, 6, 'Hello', NULL, NULL, 0, 'published', '2026-10-11 20:36:46', '2026-10-11 20:53:10');
 
 -- --------------------------------------------------------
 
@@ -218,10 +251,6 @@ CREATE TABLE `lesson_categories` (
 
 INSERT INTO `lesson_categories` (`category_id`, `category_name`, `description`, `display_order`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'Alphabet', 'Basic ASL alphabet signs from A to Z', 1, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51'),
-(2, 'Greetings', 'Common greetings and introductory signs', 2, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51'),
-(3, 'Numbers', 'Basic numbers in American Sign Language', 3, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51'),
-(4, 'Colors', 'Common colors and their ASL signs', 4, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51'),
-(5, 'Family', 'Common family-related signs', 5, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51'),
 (6, 'Basic Expression', NULL, 0, 'active', '2026-10-11 20:36:28', '2026-10-11 20:36:28');
 
 -- --------------------------------------------------------
@@ -380,7 +409,8 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`student_id`, `user_id`, `student_number`, `first_name`, `middle_name`, `last_name`, `birth_date`, `gender`, `profile_image`, `created_at`, `updated_at`) VALUES
-(1, 4, NULL, 'C', NULL, 'User', NULL, NULL, NULL, '2026-10-11 12:34:02', '2026-10-11 12:34:02');
+(1, 4, NULL, 'C', NULL, 'User', NULL, NULL, NULL, '2026-10-11 12:34:02', '2026-10-11 12:34:02'),
+(2, 5, '4900853', 'Student1', NULL, 'Lastname', NULL, NULL, NULL, '2026-10-11 20:47:29', '2026-10-11 20:47:29');
 
 -- --------------------------------------------------------
 
@@ -416,7 +446,7 @@ CREATE TABLE `student_progress` (
 --
 
 INSERT INTO `student_progress` (`progress_id`, `student_id`, `lesson_id`, `status`, `progress_percent`, `last_accessed`, `completed_at`) VALUES
-(1, 1, 3, 'in_progress', 1.00, '2026-10-11 20:37:19', NULL);
+(1, 1, 3, 'in_progress', 1.00, '2026-10-11 20:53:32', NULL);
 
 -- --------------------------------------------------------
 
@@ -442,7 +472,8 @@ CREATE TABLE `student_quiz_state` (
 --
 
 INSERT INTO `student_quiz_state` (`state_id`, `student_id`, `category_id`, `quiz_id`, `question_index`, `score`, `question_order_json`, `answers_json`, `completed`, `updated_at`) VALUES
-(1, 1, 1, 1, 0, 0, '[2,1]', '[]', 0, '2026-10-11 20:37:00');
+(1, 1, 1, 1, 0, 0, '[2,1]', '[]', 0, '2026-10-11 20:52:54'),
+(9, 2, 1, 1, 0, 0, '[1,2]', '[]', 0, '2026-10-11 20:49:02');
 
 -- --------------------------------------------------------
 
@@ -487,7 +518,8 @@ CREATE TABLE `teachers` (
 --
 
 INSERT INTO `teachers` (`teacher_id`, `user_id`, `employee_number`, `first_name`, `middle_name`, `last_name`, `created_at`, `updated_at`) VALUES
-(1, 3, NULL, 'B', NULL, 'User', '2026-10-11 12:34:02', '2026-10-11 12:34:02');
+(1, 3, NULL, 'B', NULL, 'User', '2026-10-11 12:34:02', '2026-10-11 12:34:02'),
+(2, 6, '12334', 'first', NULL, 'name', '2026-10-11 20:47:47', '2026-10-11 20:47:47');
 
 -- --------------------------------------------------------
 
@@ -512,9 +544,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password_hash`, `role_id`, `status_id`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'a', 'a@gmail.com', '$2y$12$KgSzkBpnZXa70u2wexZbVOYPi0SGOzPlCWk.Uc4piGUoSP2yuX/ha', 1, 1, '2026-10-04 14:33:59', '2026-10-11 20:36:17', '2026-10-11 20:36:17'),
-(3, 'b', 'b@gmail.com', '$2y$12$qGbHfN5UDCU6imXQQYMlyO0BX3jfFgVhMUoLURJHtWc/2aTn.xXH.', 2, 1, '2026-10-04 14:45:05', '2026-10-11 20:35:48', '2026-10-11 20:35:48'),
-(4, 'c', 'c@gmail.com', '$2y$12$/BTsq9gUVPLRSrYnNNRwBenPdZkaq8dkgdJJ1yYTO6ApqAJrcKCRq', 3, 1, '2026-10-04 14:45:37', '2026-10-11 20:36:52', '2026-10-11 20:36:52');
+(1, 'a', 'a@gmail.com', '$2y$12$KgSzkBpnZXa70u2wexZbVOYPi0SGOzPlCWk.Uc4piGUoSP2yuX/ha', 1, 1, '2026-10-04 14:33:59', '2026-10-11 20:55:46', '2026-10-11 20:55:46'),
+(3, 'b', 'b@gmail.com', '$2y$12$qGbHfN5UDCU6imXQQYMlyO0BX3jfFgVhMUoLURJHtWc/2aTn.xXH.', 2, 1, '2026-10-04 14:45:05', '2026-10-11 20:52:33', '2026-10-11 20:52:33'),
+(4, 'c', 'c@gmail.com', '$2y$12$/BTsq9gUVPLRSrYnNNRwBenPdZkaq8dkgdJJ1yYTO6ApqAJrcKCRq', 3, 1, '2026-10-04 14:45:37', '2026-10-11 20:53:24', '2026-10-11 20:53:24'),
+(5, 'student1', 'student1@gmail.com', '$2y$12$Z2Il/cX7cLJ74ZZ308LD6O3XAlosXwv3JZBwwRWynO8hkmDEuqfti', 3, 1, '2026-10-11 20:47:29', '2026-10-11 20:48:56', '2026-10-11 20:48:56'),
+(6, 'teacher', 'teacher1@gmail.com', '$2y$12$q8bQwGHEukIBIJdeQCBk4uVIhqg1vqddLm7jPJ9.KBDNHHk7zUD9K', 2, 1, '2026-10-11 20:47:47', '2026-10-11 20:49:19', '2026-10-11 20:49:19');
 
 --
 -- Indexes for dumped tables
@@ -722,7 +756,7 @@ ALTER TABLE `achievements`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `log_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `log_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `admins`
@@ -734,13 +768,13 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `classes`
 --
 ALTER TABLE `classes`
-  MODIFY `class_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `class_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `class_students`
 --
 ALTER TABLE `class_students`
-  MODIFY `class_student_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `class_student_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -806,7 +840,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `student_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `student_achievements`
@@ -818,25 +852,25 @@ ALTER TABLE `student_achievements`
 -- AUTO_INCREMENT for table `student_progress`
 --
 ALTER TABLE `student_progress`
-  MODIFY `progress_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `progress_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `student_quiz_state`
 --
 ALTER TABLE `student_quiz_state`
-  MODIFY `state_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `state_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `teachers`
 --
 ALTER TABLE `teachers`
-  MODIFY `teacher_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `teacher_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `user_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
