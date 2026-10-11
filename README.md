@@ -24,7 +24,7 @@ The integration work is being developed on the `integration/system-completion` b
 
 1. Back up your current database first.
 2. Import `kidss_db.sql` into MariaDB/MySQL if you are rebuilding the database from the exported snapshot.
-3. Import `kidss_system_upgrade.sql` into the same database. It adds `student_quiz_state` so quiz attempts can resume across navigation and removes the unused `notifications` table.
+3. Import the latest `kidss_system_upgrade.sql` into the same database. It adds `student_quiz_state` and `system_settings`, removes the unused `notifications` table, and creates missing `admins`, `teachers`, and `students` profile rows for existing users without overwriting profiles that already exist.
 4. Confirm `config/database.php` points to your database. You can use the `KIDSS_DB_HOST`, `KIDSS_DB_PORT`, `KIDSS_DB_NAME`, `KIDSS_DB_USER`, and `KIDSS_DB_PASS` environment variables.
 5. Open the site through `index.php`, not by opening nested PHP pages directly.
 
@@ -39,3 +39,9 @@ The integration work is being developed on the `integration/system-completion` b
 
 - The administrator's reports, feedback inbox, activity logs, profile, and basic system settings are database-backed. Student feedback submissions are saved in `feedback`; successful sign-ins and management changes are written to `activity_logs`.
 - Quiz scores are recalculated by the server from submitted answers before an attempt is recorded; the browser's displayed score is not trusted as the source of truth.
+
+### Latest main-branch fixes
+
+- Lesson Management now provides file-picker controls for the thumbnail, image, audio, and video. Selected files upload to `assets/lesson-media/` and automatically fill the corresponding relative path. Ensure that folder is writable by the PHP/web-server account and that PHP upload limits allow the intended file size (maximum supported by the endpoint: 100 MB).
+- The login flow repairs a missing role-specific profile row when an existing user signs in. The profile page and account editor also repair or upsert missing profile rows instead of failing silently.
+- If you already imported an older version of `kidss_system_upgrade.sql`, import the updated file again; it uses `CREATE TABLE IF NOT EXISTS` and only inserts profile rows that are missing.
