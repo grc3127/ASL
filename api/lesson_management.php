@@ -49,10 +49,16 @@ try {
     $action = (string)($data['action'] ?? '');
     if ($action === 'progress') {
         if ($role !== 'student') respond(['success'=>false,'message'=>'Student access required.'],403);
-        $studentStmt = $pdo->prepare('SELECT student_id FROM students WHERE user_id=?');
-        $studentStmt->execute([(int)($_SESSION['user_id'] ?? 0)]);
-        $studentId = (int)$studentStmt->fetchColumn();
-        if (!$studentId) respond(['success'=>false,'message'=>'Student profile was not found.'],422);
+        $currentUserId=(int)($_SESSION['user_id']??0);
+        $studentStmt=$pdo->prepare('SELECT student_id FROM students WHERE user_id=?');$studentStmt->execute([$currentUserId]);$studentId=(int)$studentStmt->fetchColumn();
+        if(!$studentId){
+            $account=$pdo->prepare('SELECT username,email FROM users WHERE user_id=?');$account->execute([$currentUserId]);$account=$account->fetch();
+            if(!$account)respond(['success'=>false,'message'=>'Student account was not found.'],404);
+            $local=trim((string)strstr((string)$account['email'],'@',true));if($local==='')$local=(string)$account['username'];
+            $label=trim(preg_replace('/[._-]+/u',' ',$local)??$local);$parts=preg_split('/\\s+/u',$label,-1,PREG_SPLIT_NO_EMPTY)?:[];
+            $first=ucfirst((string)array_shift($parts));if($first==='')$first='New';$last=$parts?ucwords(implode(' ',$parts)):'User';
+            $create=$pdo->prepare('INSERT INTO students(user_id,student_number,first_name,middle_name,last_name) VALUES(?,NULL,?,NULL,?)');$create->execute([$currentUserId,$first,$last]);$studentId=(int)$pdo->lastInsertId();
+        }
         $lessonId = filter_var($data['lesson_id'] ?? null, FILTER_VALIDATE_INT);
         $status = (string)($data['status'] ?? 'in_progress');
         if (!$lessonId || !in_array($status, ['in_progress','completed'], true)) respond(['success'=>false,'message'=>'Invalid progress data.'],422);
