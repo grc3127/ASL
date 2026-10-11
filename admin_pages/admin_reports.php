@@ -53,8 +53,8 @@ $h=static fn($v)=>htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');
  search.addEventListener('input',apply);cls.addEventListener('change',apply);
  document.getElementById('exportReport').addEventListener('click',()=>{
   const rows=filtered(),header=['Student','Class / Section','Lessons completed','Quiz average','Quiz attempts','Achievements','Last active'];
-  const data=[header,...rows.map(row=>Array.from(row.cells).map(cell=>cell.innerText.replace(/\\s+/g,' ').trim()))];
-  const csv=data.map(row=>row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(',')).join('\\r\\n');
+  const data=[header,...rows.map(row=>Array.from(row.cells).map(cell=>cell.innerText.replace(/\s+/g,' ').trim()))];
+  const csv=data.map(row=>row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(',')).join('\r\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download='kidss-student-progress-report.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
  });
