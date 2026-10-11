@@ -75,6 +75,28 @@ try {
     }
     if (!$isManager) respond(['success'=>false,'message'=>'Only teachers and administrators can manage lessons.'],403);
 
+    if ($action === 'upload_media') {
+        if (!isset($_FILES['file']) || !is_array($_FILES['file'])) respond(['success'=>false,'message'=>'Choose a file to upload.'],422);
+        $file=$_FILES['file'];
+        if ((int)($file['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_OK) respond(['success'=>false,'message'=>'The file upload failed. Choose a smaller file and try again.'],422);
+        if ((int)($file['size']??0)<1 || (int)$file['size']>100*1024*1024) respond(['success'=>false,'message'=>'Files must be between 1 byte and 100 MB.'],422);
+        $mediaType=(string)($_POST['media_type']??'');
+        if (!in_array($mediaType,['thumbnail','image','audio','video'],true)) respond(['success'=>false,'message'=>'Choose a valid media type.'],422);
+        $finfo=finfo_open(FILEINFO_MIME_TYPE);$mime=$finfo?finfo_file($finfo,(string)$file['tmp_name']):false;if($finfo)finfo_close($finfo);
+        $allowed=[
+            'image'=>['image/jpeg'=>'jpg','image/png'=>'png','image/gif'=>'gif','image/webp'=>'webp','image/avif'=>'avif'],
+            'audio'=>['audio/mpeg'=>'mp3','audio/mp3'=>'mp3','audio/wav'=>'wav','audio/x-wav'=>'wav','audio/ogg'=>'ogg','application/ogg'=>'ogg','audio/mp4'=>'m4a','audio/aac'=>'aac','audio/webm'=>'weba'],
+            'video'=>['video/mp4'=>'mp4','video/webm'=>'webm','video/ogg'=>'ogv','application/ogg'=>'ogv']
+        ];
+        $mimeGroup=($mediaType==='thumbnail')?'image':$mediaType;
+        if (!is_string($mime) || !isset($allowed[$mimeGroup][$mime])) respond(['success'=>false,'message'=>'That file type is not supported for the selected media field.'],415);
+        $directory=__DIR__.'/../assets/lesson-media';
+        if (!is_dir($directory) && !mkdir($directory,0755,true) && !is_dir($directory)) respond(['success'=>false,'message'=>'The upload folder could not be created. Check folder permissions.'],500);
+        $filename=$mimeGroup.'-'.bin2hex(random_bytes(12)).'.'.$allowed[$mimeGroup][$mime];
+        if (!move_uploaded_file((string)$file['tmp_name'],$directory.'/'.$filename)) respond(['success'=>false,'message'=>'The server could not save the uploaded file. Check folder permissions.'],500);
+        respond(['success'=>true,'message'=>'File uploaded successfully.','file_path'=>'assets/lesson-media/'.$filename,'media_type'=>$mediaType]);
+    }
+
     if ($action === 'create_category') {
         $name = trim((string)($data['category_name'] ?? ''));
         if ($name === '' || mb_strlen($name) > 100) respond(['success'=>false,'message'=>'Enter a category name (maximum 100 characters).'],422);
