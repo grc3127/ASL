@@ -29,13 +29,14 @@ requireRole('admin', 'administrator', 'teacher');
      <div class="col-md-8"><label for="lessonTitle" class="form-label">Lesson title *</label><input id="lessonTitle" class="form-control" maxlength="150" required></div>
      <div class="col-md-4"><label for="lessonCategory" class="form-label">Category *</label><select id="lessonCategory" class="form-select" required></select></div>
      <div class="col-12"><label for="lessonDescription" class="form-label">Description / learning instructions</label><textarea id="lessonDescription" class="form-control" rows="3"></textarea></div>
-     <div class="col-md-6"><label for="lessonThumbnail" class="form-label">Thumbnail path (optional)</label><input id="lessonThumbnail" class="form-control" placeholder="assets/lessons/A.png"></div>
+     <div class="col-md-6"><label for="lessonThumbnail" class="form-label">Thumbnail path (optional)</label><input id="lessonThumbnail" class="form-control" placeholder="assets/lesson-media/image-....png"><input type="file" class="form-control form-control-sm mt-2 lesson-media-file" data-upload-target="lessonThumbnail" data-media-type="thumbnail" accept="image/png,image/jpeg,image/gif,image/webp,image/avif" aria-label="Browse and upload thumbnail"><small class="text-muted">Choose an image to upload it and fill in the path automatically.</small></div>
      <div class="col-md-6"><label for="lessonDisplayOrder" class="form-label">Display order</label><input id="lessonDisplayOrder" class="form-control" type="number" value="0" min="0"></div>
-     <div class="col-md-4"><label for="lessonImage" class="form-label">Image path</label><input id="lessonImage" class="form-control" placeholder="assets/lessons/A.png"></div>
-     <div class="col-md-4"><label for="lessonAudio" class="form-label">Audio path</label><input id="lessonAudio" class="form-control" placeholder="assets/lessons/A.mp3"></div>
-     <div class="col-md-4"><label for="lessonVideo" class="form-label">Video path</label><input id="lessonVideo" class="form-control" placeholder="assets/lessons/A.mp4"></div>
+     <div class="col-md-4"><label for="lessonImage" class="form-label">Image path</label><input id="lessonImage" class="form-control" placeholder="assets/lesson-media/image-....png"><input type="file" class="form-control form-control-sm mt-2 lesson-media-file" data-upload-target="lessonImage" data-media-type="image" accept="image/png,image/jpeg,image/gif,image/webp,image/avif" aria-label="Browse and upload lesson image"></div>
+     <div class="col-md-4"><label for="lessonAudio" class="form-label">Audio path</label><input id="lessonAudio" class="form-control" placeholder="assets/lesson-media/audio-....mp3"><input type="file" class="form-control form-control-sm mt-2 lesson-media-file" data-upload-target="lessonAudio" data-media-type="audio" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac,audio/webm" aria-label="Browse and upload lesson audio"></div>
+     <div class="col-md-4"><label for="lessonVideo" class="form-label">Video path</label><input id="lessonVideo" class="form-control" placeholder="assets/lesson-media/video-....mp4"><input type="file" class="form-control form-control-sm mt-2 lesson-media-file" data-upload-target="lessonVideo" data-media-type="video" accept="video/mp4,video/webm,video/ogg" aria-label="Browse and upload lesson video"></div>
      <div class="col-md-6"><label for="lessonStatus" class="form-label">Publication status</label><select id="lessonStatus" class="form-select"><option value="draft">Draft (hidden from students)</option><option value="published">Published (visible to students)</option><option value="archived">Archived (hidden from students)</option></select></div>
     </div>
+    <p id="lessonUploadNotice" class="small mt-3 mb-0" role="status"></p>
     <p class="text-muted small mt-3 mb-0">Media paths are saved to the lesson_media table. Use paths relative to the project root. Publishing makes this lesson visible to students immediately.</p>
    </div>
    <div class="modal-footer"><button type="button" class="admin-btn admin-btn-light" data-bs-dismiss="modal">Cancel</button><button type="submit" class="admin-btn admin-btn-primary" id="saveLessonBtn">Save Lesson</button></div>
@@ -88,6 +89,15 @@ requireRole('admin', 'administrator', 'teacher');
    catch(error){message(error.message,'danger');}
  });
  search.addEventListener('input',renderRows);filter.addEventListener('change',renderRows);
+ document.querySelectorAll('.lesson-media-file').forEach(input=>input.addEventListener('change',async()=>{
+   const file=input.files&&input.files[0];if(!file)return;
+   const target=$(input.dataset.uploadTarget),status=$('lessonUploadNotice');const payload=new FormData();payload.append('action','upload_media');payload.append('media_type',input.dataset.mediaType);payload.append('file',file);
+   input.disabled=true;status.className='small mt-3 text-muted';status.textContent='Uploading '+file.name+'…';
+   try{const response=await fetch(endpoint,{method:'POST',credentials:'same-origin',body:payload});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.message||'Upload failed.');target.value=data.file_path;status.className='small mt-3 text-success';status.textContent='Uploaded '+file.name+'. The path has been filled in; save the lesson to apply it.';}
+   catch(error){status.className='small mt-3 text-danger';status.textContent=error.message;}
+   finally{input.disabled=false;input.value='';}
+ }));
+
  rows.addEventListener('click',async event=>{
    const edit=event.target.closest('[data-edit]');
    if(edit){const lesson=lessons.find(l=>Number(l.lesson_id)===Number(edit.dataset.edit));if(lesson)openEditor(lesson);return;}
