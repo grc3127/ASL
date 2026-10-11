@@ -77,8 +77,10 @@ try {
             $students=$pdo->query("SELECT s.student_id,s.student_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) full_name
                 FROM students s JOIN users u ON u.user_id=s.user_id JOIN account_status a ON a.status_id=u.status_id
                 WHERE LOWER(a.status_name)='active' ORDER BY s.last_name,s.first_name")->fetchAll();
-            $schoolYearRow=$pdo->query("SELECT setting_value FROM system_settings WHERE setting_key='school_year' LIMIT 1")->fetchColumn();
-            out(['success'=>true,'classes'=>$classes,'teachers'=>$teachers,'students'=>$students,'school_year'=>$schoolYearRow?:'2026-2027']);
+            $schoolYearRow='2026-2027';
+            try {$configured=$pdo->query("SELECT setting_value FROM system_settings WHERE setting_key='school_year' LIMIT 1")->fetchColumn();if($configured)$schoolYearRow=(string)$configured;}
+            catch(Throwable $settingsError){error_log('KIDSS settings table is missing; using default school year. '.$settingsError->getMessage());}
+            out(['success'=>true,'classes'=>$classes,'teachers'=>$teachers,'students'=>$students,'school_year'=>$schoolYearRow]);
         }
         if ($view==='progress') {
             $sql="SELECT s.student_id,s.student_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
