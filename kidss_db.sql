@@ -436,6 +436,21 @@ INSERT INTO `users` (`user_id`, `username`, `email`, `password_hash`, `role_id`,
 (4, 'c', 'c@gmail.com', '$2y$12$/BTsq9gUVPLRSrYnNNRwBenPdZkaq8dkgdJJ1yYTO6ApqAJrcKCRq', 3, 1, '2026-10-04 14:45:37', '2026-10-10 14:36:49', '2026-10-10 14:36:49');
 
 --
+-- Role-specific profiles for the seeded accounts.
+-- These starter names can be edited from each account's Profile page.
+--
+
+INSERT INTO `admins` (`admin_id`, `user_id`, `first_name`, `middle_name`, `last_name`) VALUES
+(1, 1, 'A', NULL, 'User');
+
+INSERT INTO `teachers` (`teacher_id`, `user_id`, `employee_number`, `first_name`, `middle_name`, `last_name`) VALUES
+(1, 3, NULL, 'B', NULL, 'User');
+
+INSERT INTO `students` (`student_id`, `user_id`, `student_number`, `first_name`, `middle_name`, `last_name`) VALUES
+(1, 4, NULL, 'C', NULL, 'User');
+
+
+--
 -- Indexes for dumped tables
 --
 
@@ -872,3 +887,20 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- --------------------------------------------------------
+-- Table structure for table `system_settings`
+-- --------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `system_settings` (
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` text NOT NULL,
+  `updated_by` int(10) unsigned DEFAULT NULL,
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`setting_key`),
+  KEY `idx_system_settings_updated_by` (`updated_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `system_settings` (`setting_key`, `setting_value`) VALUES
+('system_name', 'KIDSS'),
+('school_year', '2026-2027');
