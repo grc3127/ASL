@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../auth/guard.php';
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/achievement_engine.php';
 
 header('Content-Type: application/json; charset=utf-8');
 $role = strtolower((string)($_SESSION['role'] ?? ''));
@@ -20,6 +21,10 @@ function bodyData(): array {
     $raw = file_get_contents('php://input');
     $data = json_decode($raw ?: '', true);
     return is_array($data) ? $data : $_POST;
+}
+function logLessonActivity(PDO $pdo, string $action, string $description): void {
+    $stmt=$pdo->prepare('INSERT INTO activity_logs(user_id,action,description,ip_address) VALUES(?,?,?,?)');
+    $stmt->execute([(int)($_SESSION['user_id']??0),$action,$description,substr((string)($_SERVER['REMOTE_ADDR']??''),0,45)]);
 }
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -59,6 +64,7 @@ try {
             VALUES (?, ?, ?, ?, NOW(), " . ($status === 'completed' ? 'NOW()' : 'NULL') . ")
             ON DUPLICATE KEY UPDATE status=IF(status='completed','completed',VALUES(status)), progress_percent=GREATEST(progress_percent, VALUES(progress_percent)), last_accessed=NOW(), completed_at=IF(VALUES(status)='completed', COALESCE(completed_at,NOW()), completed_at)");
         $upsert->execute([$studentId, $lessonId, $status, $percent]);
+        if ($status === 'completed') refreshStudentAchievements($pdo, $studentId);
         respond(['success'=>true,'message'=>'Progress saved.']);
     }
     if (!$isManager) respond(['success'=>false,'message'=>'Only teachers and administrators can manage lessons.'],403);
@@ -68,6 +74,7 @@ try {
         if ($name === '' || mb_strlen($name) > 100) respond(['success'=>false,'message'=>'Enter a category name (maximum 100 characters).'],422);
         $stmt = $pdo->prepare("INSERT INTO lesson_categories (category_name, description, display_order, status) VALUES (?, ?, ?, 'active')");
         $stmt->execute([$name, trim((string)($data['description'] ?? '')) ?: null, (int)($data['display_order'] ?? 0)]);
+        logLessonActivity($pdo,'lesson_category_created','Created lesson category '.$name);
         respond(['success'=>true,'message'=>'Category created.','category_id'=>(int)$pdo->lastInsertId()]);
     }
     if ($action === 'create' || $action === 'update') {
@@ -107,12 +114,14 @@ try {
                 $ins->execute([$id,$type,$path,$title, array_search($type,$mediaTypes,true)]);
             }
         }
+        logLessonActivity($pdo,$action==='create'?'lesson_created':'lesson_updated',($action==='create'?'Created':'Updated').' lesson '.$title.' ('.$status.')');
         respond(['success'=>true,'message'=>$action==='create'?'Lesson created.':'Lesson updated.','lesson_id'=>$id]);
     }
     if ($action === 'status') {
         $id=(int)($data['lesson_id'] ?? 0); $status=(string)($data['status'] ?? '');
         if ($id<1 || !in_array($status,['draft','published','archived'],true)) respond(['success'=>false,'message'=>'Invalid lesson status.'],422);
         $stmt=$pdo->prepare('UPDATE lessons SET status=? WHERE lesson_id=?'); $stmt->execute([$status,$id]);
+        logLessonActivity($pdo,'lesson_status_changed','Changed lesson '.$id.' status to '.$status);
         respond(['success'=>true,'message'=>'Lesson status updated.']);
     }
     respond(['success'=>false,'message'=>'Unknown action.'],400);

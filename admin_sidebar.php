@@ -27,9 +27,8 @@
         <div class="admin-section">REPORTS</div>
         <a href="#" class="admin-link" data-page="admin_reports"><i class="bi bi-file-earmark-bar-graph-fill"></i><span>Reports</span></a>
 
-        <div class="admin-section">COMMUNICATION</div>
+        <div class="admin-section">FEEDBACK</div>
         <a href="#" class="admin-link" data-page="admin_feedback"><i class="bi bi-chat-square-text-fill"></i><span>Feedback</span></a>
-        <a href="#" class="admin-link" data-page="admin_notifications"><i class="bi bi-bell-fill"></i><span>Notifications</span></a>
 
         <div class="admin-section">SETTINGS</div>
         <a href="#" class="admin-link" data-page="admin_profile"><i class="bi bi-person-circle"></i><span>Admin Profile</span></a>

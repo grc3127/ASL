@@ -1,24 +1,24 @@
-<?php
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
-$profileName = (string)($_SESSION['name'] ?? 'Student');
-$profileUsername = (string)($_SESSION['username'] ?? '');
-$profileEmail = (string)($_SESSION['email'] ?? '');
-$studentNumber = (string)($_SESSION['student_number'] ?? 'Not assigned');
-function profileEscape(string $value): string { return htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); }
-?>
+<?php require_once __DIR__ . '/../auth/guard.php'; requireRole('student'); ?>
 <style>
-.student-profile-page{padding:8px 2px 28px;color:#24355f}.student-profile-page h1{font-size:1.8rem;font-weight:850;margin-bottom:5px}.student-profile-page .muted{color:#6b7280}.profile-panel{max-width:850px;background:#fff;border:1px solid #e8ebf3;border-radius:20px;padding:24px;margin-top:22px;box-shadow:0 7px 20px rgba(40,55,100,.04)}.profile-hero{display:flex;align-items:center;gap:16px;padding-bottom:20px;border-bottom:1px solid #edf0f6}.profile-avatar{width:76px;height:76px;border-radius:50%;background:#f1eaff;display:grid;place-items:center;color:#7048e8;font-size:2rem}.profile-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:22px}.profile-field{padding:13px 15px;border-radius:12px;background:#f8f9fc;min-width:0}.profile-field small{display:block;color:#6b7280;margin-bottom:5px}.profile-field strong{overflow-wrap:anywhere}@media(max-width:620px){.profile-fields{grid-template-columns:1fr}.profile-panel{padding:18px}}
+.student-profile-page{padding:8px 2px 28px;color:#24355f}.student-profile-page h1{font-size:1.8rem;font-weight:850;margin-bottom:5px}.student-profile-page .muted{color:#6b7280}.profile-panel{max-width:850px;background:#fff;border:1px solid #e8ebf3;border-radius:20px;padding:24px;margin-top:22px;box-shadow:0 7px 20px rgba(40,55,100,.04)}.profile-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.profile-fields label{font-weight:700;font-size:.9rem}.profile-fields input{width:100%;border:1px solid #dce1ec;border-radius:10px;padding:11px;margin-top:6px}.profile-avatar{width:76px;height:76px;border-radius:50%;background:#f1eaff;display:grid;place-items:center;color:#7048e8;font-size:2rem}@media(max-width:620px){.profile-fields{grid-template-columns:1fr}.profile-panel{padding:18px}}
 </style>
-<div class="student-profile-page">
-  <h1>My Profile</h1><p class="muted">View the account details associated with your student login.</p>
-  <section class="profile-panel">
-    <div class="profile-hero"><div class="profile-avatar"><i class="bi bi-person-fill" aria-hidden="true"></i></div><div><h2 class="h4 fw-bold mb-1"><?= profileEscape($profileName) ?></h2><span class="badge text-bg-primary">Student</span></div></div>
-    <div class="profile-fields">
-      <div class="profile-field"><small>Full name</small><strong><?= profileEscape($profileName) ?></strong></div>
-      <div class="profile-field"><small>Username</small><strong><?= profileEscape($profileUsername ?: 'Not available') ?></strong></div>
-      <div class="profile-field"><small>Email address</small><strong><?= profileEscape($profileEmail ?: 'Not available') ?></strong></div>
-      <div class="profile-field"><small>Student number</small><strong><?= profileEscape($studentNumber) ?></strong></div>
-    </div>
-    <p class="muted small mt-3 mb-0">Profile editing is not connected yet. These details are read from the current login session.</p>
-  </section>
-</div>
+<div class="student-profile-page"><h1>My Profile</h1><p class="muted">Update your student details. Changes are saved to your account in the database.</p>
+<div id="profileNotice" class="alert d-none" role="status"></div>
+<section class="profile-panel"><div class="d-flex align-items-center gap-3 mb-4"><div class="profile-avatar"><i class="bi bi-person-fill"></i></div><div><h2 id="profileHeading" class="h4 fw-bold mb-1">Student profile</h2><span class="badge text-bg-primary">Student</span></div></div>
+<form id="profileForm"><div class="profile-fields">
+<div><label for="profileFirst">First name *</label><input id="profileFirst" name="first_name" required maxlength="100"></div>
+<div><label for="profileMiddle">Middle name</label><input id="profileMiddle" name="middle_name" maxlength="100"></div>
+<div><label for="profileLast">Last name *</label><input id="profileLast" name="last_name" required maxlength="100"></div>
+<div><label for="profileEmail">Email address *</label><input id="profileEmail" name="email" type="email" required maxlength="100"></div>
+<div><label for="profileIdentifier">Student number</label><input id="profileIdentifier" name="identifier" maxlength="50"></div>
+<div><label for="profileBirthDate">Date of birth</label><input id="profileBirthDate" name="birth_date" type="date"></div>
+<div><label for="profileGender">Gender</label><select id="profileGender" name="gender"><option value="">Prefer not to say</option><option value="Female">Female</option><option value="Male">Male</option><option value="Other">Other</option></select></div>
+<div><label>Username</label><input id="profileUsername" readonly aria-readonly="true"></div>
+<div><label>Account created</label><input id="profileCreated" readonly aria-readonly="true"></div>
+<div><label>Last login</label><input id="profileLastLogin" readonly aria-readonly="true"></div>
+</div><div class="mt-4"><button class="btn btn-primary" type="submit">Save changes</button></div></form></section></div>
+<script>
+(function(){const ep='api/profile.php',form=document.getElementById('profileForm'),notice=document.getElementById('profileNotice');if(!form||form.dataset.bound)return;form.dataset.bound='1';const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function msg(t,ok){notice.className='alert '+(ok?'alert-success':'alert-danger');notice.textContent=t}
+async function load(){try{const r=await fetch(ep,{credentials:'same-origin'}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message);const p=d.profile;form.elements.first_name.value=p.first_name||'';form.elements.middle_name.value=p.middle_name||'';form.elements.last_name.value=p.last_name||'';form.elements.email.value=p.email||'';form.elements.identifier.value=p.identifier||'';form.elements.birth_date.value=p.birth_date||'';form.elements.gender.value=p.gender||'';document.getElementById('profileUsername').value=p.username||'';document.getElementById('profileCreated').value=p.created_at||'';document.getElementById('profileLastLogin').value=p.last_login||'Never';document.getElementById('profileHeading').textContent=[p.first_name,p.middle_name,p.last_name].filter(Boolean).join(' ')}catch(e){msg(e.message,false)}}
+form.addEventListener('submit',async e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form));try{const r=await fetch(ep,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message);msg(d.message,true);await load()}catch(e){msg(e.message,false)}});load()})();
+</script>

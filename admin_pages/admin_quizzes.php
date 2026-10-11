@@ -1,21 +1,13 @@
-<div class="admin-topbar">
-    <div>
-        <h1>Quiz Management</h1>
-        <p>Administrator workspace · UI prepared for database integration</p>
-    </div>
-</div>
-
-<div class="admin-card">
-    <div class="admin-toolbar">
-        <input class="admin-input" type="search" placeholder="Search quizzes..." style="flex:1;min-width:200px">
-        <button class="admin-btn admin-btn-primary"><i class="bi bi-plus-lg"></i> Create Quiz</button>
-    </div>
-    <div class="admin-table-wrap"><table class="admin-table">
-        <thead><tr><th>Quiz</th><th>Category</th><th>Questions</th><th>Attempts</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>
-            <tr><td>ASL Alphabet</td><td>Alphabet</td><td>8</td><td>312</td><td><span class="badge-status badge-active">Published</span></td><td><button class="admin-btn admin-btn-light">Manage</button></td></tr>
-            <tr><td>Greetings</td><td>Greetings</td><td>10</td><td>188</td><td><span class="badge-status badge-draft">Draft</span></td><td><button class="admin-btn admin-btn-light">Manage</button></td></tr>
-        </tbody>
-    </table></div>
-</div>
-
+<?php require_once __DIR__ . '/../auth/guard.php'; requireRole('admin','administrator'); ?>
+<div class="admin-topbar"><div><h1>Quiz Management</h1><p>Category practice quizzes use published lesson images and are saved to the quiz history. Manage whether each quiz is available to students.</p></div></div>
+<div id="quizAdminNotice" class="alert d-none" role="status"></div>
+<div class="admin-card"><div class="admin-toolbar"><input id="quizAdminSearch" class="admin-input" type="search" placeholder="Search quiz or category…" style="flex:1;min-width:220px"><button id="quizAdminReload" class="admin-btn admin-btn-light" type="button"><i class="bi bi-arrow-clockwise"></i> Refresh</button></div>
+<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Quiz</th><th>Category</th><th>Questions</th><th>Attempts</th><th>Average score</th><th>Pass mark</th><th>Status</th><th>Action</th></tr></thead><tbody id="quizAdminRows"><tr><td colspan="8">Loading quiz records…</td></tr></tbody></table></div>
+<p class="text-muted small mt-3 mb-0">A category quiz is created automatically when a student first opens it. Questions are derived from currently published lessons that have images; no separate hard-coded quiz bank is used.</p></div>
+<script>
+(function(){const ep='api/system_management.php',rows=document.getElementById('quizAdminRows'),search=document.getElementById('quizAdminSearch'),notice=document.getElementById('quizAdminNotice');if(!rows||rows.dataset.bound)return;rows.dataset.bound='1';let quizzes=[];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function msg(t,ok){notice.className='alert '+(ok?'alert-success':'alert-danger');notice.textContent=t}
+function render(){const term=search.value.toLowerCase();const list=quizzes.filter(q=>[q.title,q.category_name,q.lesson_title,q.status].join(' ').toLowerCase().includes(term));rows.innerHTML=list.length?list.map(q=>{const next=q.status==='published'?'archived':'published';return '<tr><td><strong>'+esc(q.title)+'</strong><br><small>'+esc(q.description||'')+'</small></td><td>'+esc(q.category_name||'—')+'</td><td>'+(Number(q.question_count)>0?Number(q.question_count):'Published lesson-based')+'</td><td>'+Number(q.attempt_count)+'</td><td>'+(q.average_score===null?'—':esc(q.average_score)+'%')+'</td><td>'+esc(q.passing_score)+'%</td><td><span class="badge-status '+(q.status==='published'?'badge-active':(q.status==='draft'?'badge-draft':'badge-inactive'))+'">'+esc(q.status)+'</span></td><td><button class="admin-btn admin-btn-light" data-id="'+q.quiz_id+'" data-next="'+next+'">'+(q.status==='published'?'Archive':'Publish')+'</button></td></tr>'}).join(''):'<tr><td colspan="8" class="text-center text-muted py-4">No quiz records yet. Open a category quiz as a student to create its first record.</td></tr>'}
+async function load(){try{const r=await fetch(ep+'?view=quizzes',{credentials:'same-origin'}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message||'Unable to load quizzes');quizzes=d.quizzes||[];render()}catch(e){msg(e.message,false);rows.innerHTML='<tr><td colspan="8">'+esc(e.message)+'</td></tr>'}}
+rows.addEventListener('click',async e=>{const b=e.target.closest('[data-id]');if(!b)return;if(!confirm('Set this quiz to '+b.dataset.next+'?'))return;try{const r=await fetch(ep,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'quiz_status',quiz_id:Number(b.dataset.id),status:b.dataset.next})}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message);msg(d.message,true);await load()}catch(e){msg(e.message,false)}});search.addEventListener('input',render);document.getElementById('quizAdminReload').addEventListener('click',load);load()})();
+</script>

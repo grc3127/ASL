@@ -1,18 +1,10 @@
-<div class="admin-topbar">
-    <div>
-        <h1>Feedback Management</h1>
-        <p>Administrator workspace · UI prepared for database integration</p>
-    </div>
-</div>
-
-<div class="admin-card">
-    <div class="admin-toolbar"><select class="admin-select"><option>All Ratings</option><option>5 Stars</option><option>4 Stars</option><option>3 Stars or below</option></select><select class="admin-select"><option>All Users</option><option>Students</option><option>Teachers</option></select></div>
-    <div class="admin-table-wrap"><table class="admin-table">
-        <thead><tr><th>User</th><th>Rating</th><th>Feedback</th><th>Date</th><th>Status</th></tr></thead>
-        <tbody>
-            <tr><td>Maria Santos</td><td>★★★★★</td><td>“The video makes the sign easy to follow.”</td><td>Today</td><td><span class="badge-status badge-active">Reviewed</span></td></tr>
-            <tr><td>Ms. Reyes</td><td>★★★★☆</td><td>“Please add more greetings.”</td><td>Yesterday</td><td><span class="badge-status badge-pending">New</span></td></tr>
-        </tbody>
-    </table></div>
-</div>
-
+<?php require_once __DIR__ . '/../auth/guard.php'; requireRole('admin','administrator'); ?>
+<div class="admin-topbar"><div><h1>Feedback Management</h1><p>Review feedback submitted by students and linked to lessons or quizzes.</p></div></div>
+<div id="feedbackNotice" class="alert d-none" role="status"></div>
+<div class="admin-card"><div class="admin-toolbar"><input id="feedbackSearch" class="admin-input" type="search" placeholder="Search student, lesson, or comment…" style="flex:1;min-width:220px"><select id="feedbackRating" class="admin-select"><option value="">All ratings</option><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select></div>
+<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Student</th><th>Rating</th><th>Feedback</th><th>Related to</th><th>Date</th></tr></thead><tbody id="feedbackRows"><tr><td colspan="5">Loading feedback…</td></tr></tbody></table></div></div>
+<script>
+(function(){const ep='api/feedback.php',rows=document.getElementById('feedbackRows'),search=document.getElementById('feedbackSearch'),rating=document.getElementById('feedbackRating'),notice=document.getElementById('feedbackNotice');if(!rows||rows.dataset.bound)return;rows.dataset.bound='1';let data=[];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function render(){const term=search.value.toLowerCase(),rate=rating.value;const list=data.filter(f=>(!rate||Number(f.rating)===Number(rate))&&[f.student_name,f.comment,f.lesson_title,f.quiz_title].join(' ').toLowerCase().includes(term));rows.innerHTML=list.length?list.map(f=>'<tr><td><strong>'+esc(f.student_name)+'</strong></td><td><span aria-label="'+Number(f.rating)+' out of 5">'+('★'.repeat(Number(f.rating)))+('☆'.repeat(5-Number(f.rating)))+'</span> <small>'+Number(f.rating)+'/5</small></td><td>'+esc(f.comment||'—')+'</td><td>'+esc(f.lesson_title||f.quiz_title||'General feedback')+'</td><td>'+esc(f.created_at)+'</td></tr>').join(''):'<tr><td colspan="5" class="text-center text-muted py-4">No matching feedback records.</td></tr>'}
+async function load(){try{const r=await fetch(ep,{credentials:'same-origin'}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message);data=d.feedback||[];render()}catch(e){notice.className='alert alert-danger';notice.textContent=e.message;rows.innerHTML='<tr><td colspan="5">Unable to load feedback.</td></tr>'}}search.addEventListener('input',render);rating.addEventListener('change',render);load()})();
+</script>

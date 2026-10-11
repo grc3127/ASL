@@ -1,23 +1,26 @@
-<div class="admin-topbar">
-    <div>
-        <h1>Teacher Accounts</h1>
-        <p>Administrator workspace · UI prepared for database integration</p>
-    </div>
-</div>
-
+<?php
+require_once __DIR__ . '/../auth/guard.php'; requireRole('admin','administrator');
+?>
+<div class="admin-topbar"><div><h1>Teacher Accounts</h1><p>Teacher accounts and class assignments loaded from the database.</p></div></div>
+<div id="teacherAccountNotice" class="alert d-none" role="status"></div>
 <div class="admin-card">
-    <div class="admin-toolbar">
-        <input class="admin-input" type="search" placeholder="Search teacher name or email" style="flex:1;min-width:220px">
-        <select class="admin-select"><option>All Statuses</option><option>Active</option><option>Inactive</option><option>Pending</option></select>
-        <button class="admin-btn admin-btn-primary"><i class="bi bi-plus-lg"></i> Add Teacher</button>
-    </div>
-    <div class="admin-table-wrap"><table class="admin-table">
-        <thead><tr><th>Teacher</th><th>Email</th><th>Assigned Classes</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>
-            <tr><td><strong>Ms. Santos</strong></td><td>santos@example.com</td><td>Kindergarten A</td><td><span class="badge-status badge-active">Active</span></td><td><button class="admin-btn admin-btn-light">Manage</button></td></tr>
-            <tr><td><strong>Ms. Reyes</strong></td><td>reyes@example.com</td><td>Kindergarten B, C</td><td><span class="badge-status badge-active">Active</span></td><td><button class="admin-btn admin-btn-light">Manage</button></td></tr>
-            <tr><td><strong>Mr. Cruz</strong></td><td>cruz@example.com</td><td>—</td><td><span class="badge-status badge-pending">Pending</span></td><td><button class="admin-btn admin-btn-warning">Review</button></td></tr>
-        </tbody>
-    </table></div>
+ <form id="teacherCreateForm" class="row g-2 mb-4">
+  <div class="col-md-3"><input class="admin-input w-100" name="first_name" placeholder="First name *" required></div><div class="col-md-3"><input class="admin-input w-100" name="last_name" placeholder="Last name *" required></div>
+  <div class="col-md-3"><input class="admin-input w-100" name="username" placeholder="Username *" required></div><div class="col-md-3"><input class="admin-input w-100" type="email" name="email" placeholder="Email *" required></div>
+  <div class="col-md-3"><input class="admin-input w-100" name="employee_number" placeholder="Employee number (optional)"></div><div class="col-md-3"><input class="admin-input w-100" type="password" name="password" placeholder="Initial password (8+ chars)" minlength="8" required></div>
+  <div class="col-md-3"><button class="admin-btn admin-btn-primary w-100" type="submit"><i class="bi bi-plus-lg"></i> Create Teacher</button></div>
+  <div class="col-md-3"><input id="teacherSearch" class="admin-input w-100" type="search" placeholder="Search teachers..."></div>
+ </form>
+ <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Teacher</th><th>Employee no.</th><th>Username / Email</th><th>Assigned classes</th><th>Status</th><th>Last login</th><th>Action</th></tr></thead><tbody id="teacherAccountRows"><tr><td colspan="7">Loading database records…</td></tr></tbody></table></div>
 </div>
-
+<script>
+(function(){const endpoint='api/system_management.php',form=document.getElementById('teacherCreateForm'),rows=document.getElementById('teacherAccountRows'),notice=document.getElementById('teacherAccountNotice'),search=document.getElementById('teacherSearch');if(!form||form.dataset.bound)return;form.dataset.bound='1';let accounts=[];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function message(text,ok){notice.className='alert '+(ok?'alert-success':'alert-danger');notice.textContent=text}
+function render(){const term=search.value.toLowerCase();const data=accounts.filter(a=>a.role_name.toLowerCase()==='teacher'&&[a.full_name,a.username,a.email,a.employee_number,a.class_names].join(' ').toLowerCase().includes(term));rows.innerHTML=data.length?data.map(a=>'<tr><td><strong>'+esc(a.full_name)+'</strong></td><td>'+esc(a.employee_number||'—')+'</td><td>'+esc(a.username)+'<br><small>'+esc(a.email)+'</small></td><td>'+esc(a.class_names||'None')+'</td><td><span class="badge-status '+(a.status_name.toLowerCase()==='active'?'badge-active':'badge-inactive')+'">'+esc(a.status_name)+'</span></td><td>'+esc(a.last_login||'Never')+'</td><td><button class="admin-btn admin-btn-light me-1" data-edit="teacher" data-id="'+a.user_id+'">Edit</button><button class="admin-btn admin-btn-light" data-status="'+a.user_id+'" data-next="'+(a.status_name.toLowerCase()==='active'?'inactive':'active')+'">'+(a.status_name.toLowerCase()==='active'?'Deactivate':'Activate')+'</button></td></tr>').join(''):'<tr><td colspan="7" class="text-center text-muted py-4">No matching teacher accounts.</td></tr>'}
+async function load(){try{const r=await fetch(endpoint+'?view=accounts',{credentials:'same-origin'}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message||'Unable to load accounts');accounts=d.accounts;render()}catch(e){rows.innerHTML='<tr><td colspan="7">'+esc(e.message)+'</td></tr>'}}
+form.addEventListener('submit',async e=>{e.preventDefault();const data=Object.fromEntries(new FormData(form));data.action='account_create';data.role='teacher';try{const r=await fetch(endpoint,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message);form.reset();message(d.message,true);await load()}catch(e){message(e.message||'Unable to create teacher.',false)}});
+rows.addEventListener('click',async e=>{const b=e.target.closest('[data-edit="teacher"]');if(!b)return;const a=accounts.find(x=>Number(x.user_id)===Number(b.dataset.id));if(!a)return;const full=prompt('Full name (first [middle] last):',a.full_name||'');if(full===null)return;const parts=full.trim().split(/\s+/);if(parts.length<2){message('Enter at least a first and last name.',false);return}const username=prompt('Username:',a.username);if(username===null)return;const email=prompt('Email:',a.email);if(email===null)return;const identifier=prompt('Employee number:',a.employee_number||'');if(identifier===null)return;const payload={action:'account_update',user_id:Number(a.user_id),first_name:parts[0],middle_name:parts.length>2?parts.slice(1,-1).join(' '):'',last_name:parts[parts.length-1],username,email,identifier};try{const r=await fetch(endpoint,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message);message(d.message,true);await load()}catch(e){message(e.message,false)}});
+rows.addEventListener('click',async e=>{const b=e.target.closest('[data-status]');if(!b)return;if(!confirm('Change this teacher account to '+b.dataset.next+'?'))return;try{const r=await fetch(endpoint,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'account_status',user_id:Number(b.dataset.status),status:b.dataset.next})}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message);message(d.message,true);await load()}catch(e){message(e.message,false)}});
+search.addEventListener('input',render);load()})();
+</script>

@@ -1,18 +1,22 @@
-<div class="admin-topbar">
-    <div>
-        <h1>Achievements Management</h1>
-        <p>Administrator workspace · UI prepared for database integration</p>
-    </div>
-</div>
-
-<div class="admin-card">
-    <div class="admin-toolbar">
-        <button class="admin-btn admin-btn-primary"><i class="bi bi-plus-lg"></i> Add Achievement</button>
-    </div>
-    <div class="row g-3">
-        <div class="col-md-4"><div class="admin-card mb-0"><div class="display-5 text-warning"><i class="bi bi-star-fill"></i></div><h3 class="mt-3">First Steps</h3><p class="text-muted small">Complete the first lesson.</p><span class="badge-status badge-active">Active</span></div></div>
-        <div class="col-md-4"><div class="admin-card mb-0"><div class="display-5 text-warning"><i class="bi bi-trophy-fill"></i></div><h3 class="mt-3">Quiz Champion</h3><p class="text-muted small">Score 90% or higher on a quiz.</p><span class="badge-status badge-active">Active</span></div></div>
-        <div class="col-md-4"><div class="admin-card mb-0"><div class="display-5 text-warning"><i class="bi bi-award-fill"></i></div><h3 class="mt-3">ASL Explorer</h3><p class="text-muted small">Complete three lesson categories.</p><span class="badge-status badge-draft">Draft</span></div></div>
-    </div>
-</div>
-
+<?php require_once __DIR__ . '/../auth/guard.php'; requireRole('admin','administrator'); ?>
+<div class="admin-topbar"><div><h1>Achievements Management</h1><p>Manage achievement rules and review badges actually earned by students.</p></div></div>
+<div id="adminAchievementNotice" class="alert d-none" role="status"></div>
+<div class="admin-card mb-4"><h2 class="h5 fw-bold">Create / Edit Achievement Rule</h2><form id="achievementForm" class="row g-2">
+<input type="hidden" name="achievement_id" id="achievementId">
+<div class="col-md-4"><label class="form-label">Name *</label><input class="admin-input w-100" name="name" required maxlength="150"></div>
+<div class="col-md-4"><label class="form-label">Requirement *</label><select class="admin-select w-100" name="requirement_type"><option value="lessons_completed">Lessons completed</option><option value="quizzes_completed">Quizzes completed</option><option value="perfect_quiz">Perfect quiz scores</option><option value="category_completed">Categories completed</option></select></div>
+<div class="col-md-2"><label class="form-label">Target *</label><input class="admin-input w-100" name="requirement_value" type="number" min="1" value="1" required></div>
+<div class="col-md-2"><label class="form-label">Status</label><select class="admin-select w-100" name="status"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+<div class="col-12"><label class="form-label">Description</label><textarea class="admin-input w-100" name="description" rows="2"></textarea></div><div class="col-12"><button class="admin-btn admin-btn-primary" type="submit">Save rule</button> <button class="admin-btn admin-btn-light" type="button" id="achievementClear">Clear</button></div>
+</form></div>
+<div class="admin-card mb-4"><h2 class="h5 fw-bold">Achievement Rules</h2><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Requirement</th><th>Target</th><th>Status</th><th></th></tr></thead><tbody id="achievementRuleRows"><tr><td colspan="5">Loading rules…</td></tr></tbody></table></div></div>
+<div class="admin-card"><h2 class="h5 fw-bold">Earned Achievements</h2><p class="text-muted small">This list comes from student_achievements, not placeholder data.</p><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Student</th><th>Achievement</th><th>Earned at</th></tr></thead><tbody id="earnedAchievementRows"><tr><td colspan="3">Loading records…</td></tr></tbody></table></div></div>
+<script>
+(function(){const ep='api/system_management.php',form=document.getElementById('achievementForm'),rules=document.getElementById('achievementRuleRows'),earned=document.getElementById('earnedAchievementRows'),notice=document.getElementById('adminAchievementNotice');if(!form||form.dataset.bound)return;form.dataset.bound='1';let defs=[];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function msg(t,ok){notice.className='alert '+(ok?'alert-success':'alert-danger');notice.textContent=t}
+async function request(url,body){const r=await fetch(url,{credentials:'same-origin',...(body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{})}),d=await r.json();if(!r.ok||!d.success)throw Error(d.message||'Request failed');return d}
+async function load(){try{const d=await request(ep+'?view=achievements');defs=d.achievements||[];rules.innerHTML=defs.length?defs.map(a=>'<tr><td><strong>'+esc(a.name)+'</strong><br><small>'+esc(a.description||'')+'</small></td><td>'+esc(a.requirement_type)+'</td><td>'+Number(a.requirement_value)+'</td><td>'+esc(a.status)+'</td><td><button class="admin-btn admin-btn-light" data-edit="'+a.achievement_id+'">Edit</button></td></tr>').join(''):'<tr><td colspan="5">No achievement rules configured.</td></tr>';earned.innerHTML=d.earned.length?d.earned.map(a=>'<tr><td>'+esc(a.student_name)+'</td><td>'+esc(a.achievement_name)+'</td><td>'+esc(a.earned_at)+'</td></tr>').join(''):'<tr><td colspan="3" class="text-muted">No earned achievement records yet.</td></tr>'}catch(e){msg(e.message,false)}}
+form.addEventListener('submit',async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(form));d.action='achievement_save';try{const r=await request(ep,d);msg(r.message,true);form.reset();document.getElementById('achievementId').value='';form.elements.requirement_value.value=1;await load()}catch(e){msg(e.message,false)}});
+rules.addEventListener('click',e=>{const b=e.target.closest('[data-edit]');if(!b)return;const a=defs.find(x=>Number(x.achievement_id)===Number(b.dataset.edit));if(!a)return;document.getElementById('achievementId').value=a.achievement_id;form.elements.name.value=a.name;form.elements.description.value=a.description||'';form.elements.requirement_type.value=a.requirement_type||'lessons_completed';form.elements.requirement_value.value=a.requirement_value||1;form.elements.status.value=a.status});
+document.getElementById('achievementClear').addEventListener('click',()=>{form.reset();document.getElementById('achievementId').value='';form.elements.requirement_value.value=1});load()})();
+</script>

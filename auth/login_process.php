@@ -142,6 +142,9 @@ SQL;
     $update = $pdo->prepare('UPDATE users SET last_login = NOW() WHERE user_id = :user_id');
     $update->execute([':user_id' => (int) $user['user_id']]);
 
+    $activity = $pdo->prepare('INSERT INTO activity_logs (user_id, action, description, ip_address) VALUES (?, ?, ?, ?)');
+    $activity->execute([(int) $user['user_id'], 'login', 'Successful login', substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45)]);
+
     header('Location: role_redirect.php');
     exit;
 } catch (Throwable $e) {
