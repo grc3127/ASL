@@ -32,7 +32,32 @@ $h=static fn($v)=>htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');
 <div class="admin-card"><div class="admin-toolbar"><input id="reportSearch" class="admin-input" type="search" placeholder="Search student…" style="flex:1;min-width:180px"><select id="reportClass" class="admin-select"><option value="">All classes</option><?php foreach($classes as $class): $label=$class['class_name'].($class['section']?' - '.$class['section']:'').' ('.$class['school_year'].')'; ?><option value="<?= $h($class['class_name'].($class['section']?' - '.$class['section']:'')) ?>"><?= $h($label) ?></option><?php endforeach; ?></select><button id="exportReport" class="admin-btn admin-btn-primary" type="button"><i class="bi bi-download"></i> Export CSV</button></div>
 <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Student</th><th>Class / Section</th><th>Lessons</th><th>Quiz average</th><th>Quiz attempts</th><th>Achievements</th><th>Last active</th></tr></thead><tbody id="reportRows">
 <?php if(!$reportRows): ?><tr><td colspan="7" class="text-center text-muted py-4">No student records found.</td></tr><?php else: foreach($reportRows as $row): $total=(int)$row['total_lessons'];$done=(int)$row['completed_lessons'];$classNames=$row['class_names']?:'Not assigned'; ?><tr data-class="<?= $h($classNames) ?>"><td><?= $h($row['student_name']) ?><br><small><?= $h($row['student_number']??'') ?></small></td><td><?= $h($classNames) ?></td><td><?= $done ?>/<?= $total ?> (<?= $total?round($done/$total*100):0 ?>%)</td><td><?= $row['quiz_average']===null?'—':$h($row['quiz_average']).'%' ?></td><td><?= (int)$row['quiz_attempts'] ?></td><td><?= (int)$row['achievements'] ?></td><td><?= $row['last_active']?$h($row['last_active']):'No activity yet' ?></td></tr><?php endforeach; endif; ?>
-</tbody></table></div><p id="reportCount" class="text-muted small mt-3 mb-0"><?= count($reportRows) ?> student records</p></div>
+<tr id="reportNoMatches" hidden><td colspan="7" class="text-center text-muted py-4">No student records match your search.</td></tr></tbody></table></div><p id="reportCount" class="text-muted small mt-3 mb-0"><?= count($reportRows) ?> student records</p></div>
 <script>
-(function(){const search=document.getElementById('reportSearch'),cls=document.getElementById('reportClass'),tbody=document.getElementById('reportRows'),count=document.getElementById('reportCount');function filtered(){const term=search.value.toLowerCase(),c=cls.value;const rows=Array.from(tbody.querySelectorAll('tr[data-class]'));return rows.filter(r=>r.textContent.toLowerCase().includes(term)&&(!c||r.dataset.class.split(', ').some(v=>v===c)))}function apply(){const all=tbody.querySelectorAll('tr[data-class]'),show=new Set(filtered());all.forEach(r=>r.hidden=!show.has(r));count.textContent=show.size+' student records shown.'}search.addEventListener('input',apply);cls.addEventListener('change',apply);document.getElementById('exportReport').addEventListener('click',()=>{const rows=filtered();const header=['Student','Class / Section','Lessons completed','Quiz average','Quiz attempts','Achievements','Last active'];const data=[header,...rows.map(r=>Array.from(r.cells).map(c=>c.innerText.replace(/\s+/g,' ').trim()))];const csv=data.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='kidss-student-progress-report.csv';a.click();URL.revokeObjectURL(url)})})();
+(function(){
+ const search=document.getElementById('reportSearch'),cls=document.getElementById('reportClass'),tbody=document.getElementById('reportRows'),count=document.getElementById('reportCount'),empty=document.getElementById('reportNoMatches');
+ function filtered(){
+  const term=search.value.trim().toLocaleLowerCase(),selectedClass=cls.value;
+  return Array.from(tbody.querySelectorAll('tr[data-class]')).filter(row=>{
+   const matchesText=row.textContent.toLocaleLowerCase().includes(term);
+   const classes=row.dataset.class.split(', ').map(value=>value.trim());
+   return matchesText&&(!selectedClass||classes.includes(selectedClass));
+  });
+ }
+ function apply(){
+  const all=Array.from(tbody.querySelectorAll('tr[data-class]')),shown=new Set(filtered());
+  all.forEach(row=>{row.style.display=shown.has(row)?'table-row':'none';});
+  if(empty)empty.hidden=shown.size!==0||all.length===0;
+  count.textContent=shown.size+' student record(s) shown.';
+ }
+ search.addEventListener('input',apply);cls.addEventListener('change',apply);
+ document.getElementById('exportReport').addEventListener('click',()=>{
+  const rows=filtered(),header=['Student','Class / Section','Lessons completed','Quiz average','Quiz attempts','Achievements','Last active'];
+  const data=[header,...rows.map(row=>Array.from(row.cells).map(cell=>cell.innerText.replace(/\\s+/g,' ').trim()))];
+  const csv=data.map(row=>row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(',')).join('\\r\\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='kidss-student-progress-report.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ });
+ apply();
+})();
 </script>
