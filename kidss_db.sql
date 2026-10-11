@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2026 at 08:44 AM
+-- Generation Time: Oct 11, 2026 at 02:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `kidss_db_v2`
+-- Database: `kidss_db`
 --
 
 -- --------------------------------------------------------
@@ -86,6 +86,18 @@ CREATE TABLE `activity_logs` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`log_id`, `user_id`, `action`, `description`, `ip_address`, `created_at`) VALUES
+(1, 3, 'login', 'Successful login', '::1', '2026-10-11 20:35:48'),
+(2, 4, 'login', 'Successful login', '::1', '2026-10-11 20:36:01'),
+(3, 1, 'login', 'Successful login', '::1', '2026-10-11 20:36:17'),
+(4, 1, 'lesson_category_created', 'Created lesson category Basic Expression', '::1', '2026-10-11 20:36:28'),
+(5, 1, 'lesson_created', 'Created lesson Hello (published)', '::1', '2026-10-11 20:36:46'),
+(6, 4, 'login', 'Successful login', '::1', '2026-10-11 20:36:52');
+
 -- --------------------------------------------------------
 
 --
@@ -101,6 +113,13 @@ CREATE TABLE `admins` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `admins`
+--
+
+INSERT INTO `admins` (`admin_id`, `user_id`, `first_name`, `middle_name`, `last_name`, `created_at`, `updated_at`) VALUES
+(1, 1, 'A', NULL, 'User', '2026-10-11 12:34:02', '2026-10-11 12:34:02');
 
 -- --------------------------------------------------------
 
@@ -148,7 +167,7 @@ CREATE TABLE `feedback` (
   `rating` tinyint(3) UNSIGNED NOT NULL,
   `comment` text DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -174,7 +193,8 @@ CREATE TABLE `lessons` (
 
 INSERT INTO `lessons` (`lesson_id`, `category_id`, `title`, `description`, `thumbnail`, `display_order`, `status`, `created_at`, `updated_at`) VALUES
 (1, 1, 'A', NULL, NULL, 0, 'published', '2026-10-10 13:23:11', '2026-10-10 13:33:00'),
-(2, 1, 'B', NULL, NULL, 0, 'published', '2026-10-10 14:36:30', '2026-10-10 14:36:30');
+(2, 1, 'B', NULL, NULL, 0, 'published', '2026-10-10 14:36:30', '2026-10-10 14:36:30'),
+(3, 6, 'Hello', NULL, NULL, 0, 'published', '2026-10-11 20:36:46', '2026-10-11 20:36:46');
 
 -- --------------------------------------------------------
 
@@ -201,7 +221,8 @@ INSERT INTO `lesson_categories` (`category_id`, `category_name`, `description`, 
 (2, 'Greetings', 'Common greetings and introductory signs', 2, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51'),
 (3, 'Numbers', 'Basic numbers in American Sign Language', 3, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51'),
 (4, 'Colors', 'Common colors and their ASL signs', 4, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51'),
-(5, 'Family', 'Common family-related signs', 5, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51');
+(5, 'Family', 'Common family-related signs', 5, 'active', '2026-10-04 06:09:51', '2026-10-04 06:09:51'),
+(6, 'Basic Expression', NULL, 0, 'active', '2026-10-11 20:36:28', '2026-10-11 20:36:28');
 
 -- --------------------------------------------------------
 
@@ -223,22 +244,6 @@ CREATE TABLE `lesson_media` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `notifications`
---
-
-CREATE TABLE `notifications` (
-  `notification_id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
-  `title` varchar(150) NOT NULL,
-  `message` text NOT NULL,
-  `notification_type` varchar(50) DEFAULT NULL,
-  `is_read` tinyint(1) NOT NULL DEFAULT 0,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `quizzes`
 --
 
@@ -252,6 +257,14 @@ CREATE TABLE `quizzes` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `quizzes`
+--
+
+INSERT INTO `quizzes` (`quiz_id`, `lesson_id`, `title`, `description`, `passing_score`, `status`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'Practice: Alphabet', 'Automatically generated practice quiz for the published lessons in Alphabet.', 75.00, 'published', '2026-10-11 20:36:02', '2026-10-11 20:36:02'),
+(2, NULL, 'Practice: Basic Expression', 'Automatically generated practice quiz for the published lessons in Basic Expression.', 75.00, 'published', '2026-10-11 20:36:54', '2026-10-11 20:36:54');
 
 -- --------------------------------------------------------
 
@@ -362,6 +375,13 @@ CREATE TABLE `students` (
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `students`
+--
+
+INSERT INTO `students` (`student_id`, `user_id`, `student_number`, `first_name`, `middle_name`, `last_name`, `birth_date`, `gender`, `profile_image`, `created_at`, `updated_at`) VALUES
+(1, 4, NULL, 'C', NULL, 'User', NULL, NULL, NULL, '2026-10-11 12:34:02', '2026-10-11 12:34:02');
+
 -- --------------------------------------------------------
 
 --
@@ -391,6 +411,60 @@ CREATE TABLE `student_progress` (
   `completed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `student_progress`
+--
+
+INSERT INTO `student_progress` (`progress_id`, `student_id`, `lesson_id`, `status`, `progress_percent`, `last_accessed`, `completed_at`) VALUES
+(1, 1, 3, 'in_progress', 1.00, '2026-10-11 20:37:19', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_quiz_state`
+--
+
+CREATE TABLE `student_quiz_state` (
+  `state_id` int(10) UNSIGNED NOT NULL,
+  `student_id` int(10) UNSIGNED NOT NULL,
+  `category_id` int(10) UNSIGNED NOT NULL,
+  `quiz_id` int(10) UNSIGNED NOT NULL,
+  `question_index` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `score` int(10) UNSIGNED NOT NULL DEFAULT 0,
+  `question_order_json` longtext NOT NULL,
+  `answers_json` longtext NOT NULL,
+  `completed` tinyint(1) NOT NULL DEFAULT 0,
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `student_quiz_state`
+--
+
+INSERT INTO `student_quiz_state` (`state_id`, `student_id`, `category_id`, `quiz_id`, `question_index`, `score`, `question_order_json`, `answers_json`, `completed`, `updated_at`) VALUES
+(1, 1, 1, 1, 0, 0, '[2,1]', '[]', 0, '2026-10-11 20:37:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `system_settings`
+--
+
+CREATE TABLE `system_settings` (
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` text NOT NULL,
+  `updated_by` int(10) UNSIGNED DEFAULT NULL,
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `system_settings`
+--
+
+INSERT INTO `system_settings` (`setting_key`, `setting_value`, `updated_by`, `updated_at`) VALUES
+('school_year', '2026-2027', NULL, '2026-10-11 12:34:05'),
+('system_name', 'KIDSS', NULL, '2026-10-11 12:34:05');
+
 -- --------------------------------------------------------
 
 --
@@ -407,6 +481,13 @@ CREATE TABLE `teachers` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `teachers`
+--
+
+INSERT INTO `teachers` (`teacher_id`, `user_id`, `employee_number`, `first_name`, `middle_name`, `last_name`, `created_at`, `updated_at`) VALUES
+(1, 3, NULL, 'B', NULL, 'User', '2026-10-11 12:34:02', '2026-10-11 12:34:02');
 
 -- --------------------------------------------------------
 
@@ -431,24 +512,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password_hash`, `role_id`, `status_id`, `created_at`, `updated_at`, `last_login`) VALUES
-(1, 'a', 'a@gmail.com', '$2y$12$KgSzkBpnZXa70u2wexZbVOYPi0SGOzPlCWk.Uc4piGUoSP2yuX/ha', 1, 1, '2026-10-04 14:33:59', '2026-10-10 14:34:40', '2026-10-10 14:34:40'),
-(3, 'b', 'b@gmail.com', '$2y$12$qGbHfN5UDCU6imXQQYMlyO0BX3jfFgVhMUoLURJHtWc/2aTn.xXH.', 2, 1, '2026-10-04 14:45:05', '2026-10-09 22:32:58', '2026-10-09 22:32:58'),
-(4, 'c', 'c@gmail.com', '$2y$12$/BTsq9gUVPLRSrYnNNRwBenPdZkaq8dkgdJJ1yYTO6ApqAJrcKCRq', 3, 1, '2026-10-04 14:45:37', '2026-10-10 14:36:49', '2026-10-10 14:36:49');
-
---
--- Role-specific profiles for the seeded accounts.
--- These starter names can be edited from each account's Profile page.
---
-
-INSERT INTO `admins` (`admin_id`, `user_id`, `first_name`, `middle_name`, `last_name`) VALUES
-(1, 1, 'A', NULL, 'User');
-
-INSERT INTO `teachers` (`teacher_id`, `user_id`, `employee_number`, `first_name`, `middle_name`, `last_name`) VALUES
-(1, 3, NULL, 'B', NULL, 'User');
-
-INSERT INTO `students` (`student_id`, `user_id`, `student_number`, `first_name`, `middle_name`, `last_name`) VALUES
-(1, 4, NULL, 'C', NULL, 'User');
-
+(1, 'a', 'a@gmail.com', '$2y$12$KgSzkBpnZXa70u2wexZbVOYPi0SGOzPlCWk.Uc4piGUoSP2yuX/ha', 1, 1, '2026-10-04 14:33:59', '2026-10-11 20:36:17', '2026-10-11 20:36:17'),
+(3, 'b', 'b@gmail.com', '$2y$12$qGbHfN5UDCU6imXQQYMlyO0BX3jfFgVhMUoLURJHtWc/2aTn.xXH.', 2, 1, '2026-10-04 14:45:05', '2026-10-11 20:35:48', '2026-10-11 20:35:48'),
+(4, 'c', 'c@gmail.com', '$2y$12$/BTsq9gUVPLRSrYnNNRwBenPdZkaq8dkgdJJ1yYTO6ApqAJrcKCRq', 3, 1, '2026-10-04 14:45:37', '2026-10-11 20:36:52', '2026-10-11 20:36:52');
 
 --
 -- Indexes for dumped tables
@@ -530,13 +596,6 @@ ALTER TABLE `lesson_media`
   ADD KEY `idx_lesson_media_lesson` (`lesson_id`);
 
 --
--- Indexes for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`notification_id`),
-  ADD KEY `idx_notifications_user` (`user_id`);
-
---
 -- Indexes for table `quizzes`
 --
 ALTER TABLE `quizzes`
@@ -609,6 +668,23 @@ ALTER TABLE `student_progress`
   ADD KEY `idx_progress_lesson` (`lesson_id`);
 
 --
+-- Indexes for table `student_quiz_state`
+--
+ALTER TABLE `student_quiz_state`
+  ADD PRIMARY KEY (`state_id`),
+  ADD UNIQUE KEY `uq_student_quiz_category` (`student_id`,`category_id`),
+  ADD KEY `idx_quiz_state_student` (`student_id`),
+  ADD KEY `idx_quiz_state_category` (`category_id`),
+  ADD KEY `idx_quiz_state_quiz` (`quiz_id`);
+
+--
+-- Indexes for table `system_settings`
+--
+ALTER TABLE `system_settings`
+  ADD PRIMARY KEY (`setting_key`),
+  ADD KEY `idx_system_settings_updated_by` (`updated_by`);
+
+--
 -- Indexes for table `teachers`
 --
 ALTER TABLE `teachers`
@@ -646,13 +722,13 @@ ALTER TABLE `achievements`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `log_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `log_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `admin_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `admin_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `classes`
@@ -676,13 +752,13 @@ ALTER TABLE `feedback`
 -- AUTO_INCREMENT for table `lessons`
 --
 ALTER TABLE `lessons`
-  MODIFY `lesson_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `lesson_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `lesson_categories`
 --
 ALTER TABLE `lesson_categories`
-  MODIFY `category_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `category_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `lesson_media`
@@ -691,16 +767,10 @@ ALTER TABLE `lesson_media`
   MODIFY `media_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `notifications`
---
-ALTER TABLE `notifications`
-  MODIFY `notification_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `quizzes`
 --
 ALTER TABLE `quizzes`
-  MODIFY `quiz_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `quiz_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `quiz_answers`
@@ -736,7 +806,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `student_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `student_achievements`
@@ -748,13 +818,19 @@ ALTER TABLE `student_achievements`
 -- AUTO_INCREMENT for table `student_progress`
 --
 ALTER TABLE `student_progress`
-  MODIFY `progress_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `progress_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `student_quiz_state`
+--
+ALTER TABLE `student_quiz_state`
+  MODIFY `state_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `teachers`
 --
 ALTER TABLE `teachers`
-  MODIFY `teacher_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `teacher_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -810,12 +886,6 @@ ALTER TABLE `lessons`
 --
 ALTER TABLE `lesson_media`
   ADD CONSTRAINT `fk_lesson_media_lesson` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`lesson_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD CONSTRAINT `fk_notifications_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `quizzes`
@@ -887,20 +957,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
--- --------------------------------------------------------
--- Table structure for table `system_settings`
--- --------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `system_settings` (
-  `setting_key` varchar(100) NOT NULL,
-  `setting_value` text NOT NULL,
-  `updated_by` int(10) unsigned DEFAULT NULL,
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`setting_key`),
-  KEY `idx_system_settings_updated_by` (`updated_by`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT IGNORE INTO `system_settings` (`setting_key`, `setting_value`) VALUES
-('system_name', 'KIDSS'),
-('school_year', '2026-2027');
