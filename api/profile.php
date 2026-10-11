@@ -3,10 +3,27 @@ declare(strict_types=1);
 require_once __DIR__ . '/../auth/guard.php'; requireLogin(); require_once __DIR__ . '/../config/database.php';
 header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store');
 function profileOut(array $d,int $status=200):never{http_response_code($status);echo json_encode($d,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;}
+function ensureRoleProfile(PDO $pdo,string $role,int $userId):void{
+ $map=['student'=>['students','student_id'],'teacher'=>['teachers','teacher_id'],'admin'=>['admins','admin_id'],'administrator'=>['admins','admin_id']];
+ if(!isset($map[$role]))throw new RuntimeException('Unsupported account role.');
+ [$table,$idColumn]=$map[$role];
+ $check=$pdo->prepare("SELECT {$idColumn} FROM {$table} WHERE user_id=?");$check->execute([$userId]);if($check->fetchColumn())return;
+ $u=$pdo->prepare('SELECT username,email FROM users WHERE user_id=?');$u->execute([$userId]);$account=$u->fetch();
+ if(!$account)throw new RuntimeException('Account not found.');
+ $local=trim((string)strstr((string)$account['email'],'@',true));if($local==='')$local=(string)$account['username'];
+ $label=trim(preg_replace('/[._-]+/u',' ',$local)??$local);$parts=preg_split('/\\s+/u',$label,-1,PREG_SPLIT_NO_EMPTY)?:[];
+ $first=ucfirst((string)array_shift($parts));if($first==='')$first='New';
+ $last=$parts?ucwords(implode(' ',$parts)):'User';
+ if($role==='student')$insert=$pdo->prepare('INSERT INTO students(user_id,student_number,first_name,middle_name,last_name) VALUES(?,NULL,?,NULL,?)');
+ elseif($role==='teacher')$insert=$pdo->prepare('INSERT INTO teachers(user_id,employee_number,first_name,middle_name,last_name) VALUES(?,NULL,?,NULL,?)');
+ else $insert=$pdo->prepare('INSERT INTO admins(user_id,first_name,middle_name,last_name) VALUES(?,?,NULL,?)');
+ $insert->execute([$userId,$first,$last]);
+}
 try{
  $u=currentUser();$userId=$u['user_id'];$role=$u['role'];
  $table=$role==='student'?'students':($role==='teacher'?'teachers':($role==='admin'||$role==='administrator'?'admins':''));
  if(!$table)profileOut(['success'=>false,'message'=>'Unsupported role.'],403);
+ ensureRoleProfile($pdo,$role,(int)$userId);
  $idColumn=$role==='student'?'student_id':($role==='teacher'?'teacher_id':'admin_id');
  if($_SERVER['REQUEST_METHOD']==='GET'){
   $extra=$role==='student'?',p.birth_date,p.gender,p.profile_image':',NULL AS birth_date,NULL AS gender,NULL AS profile_image';
