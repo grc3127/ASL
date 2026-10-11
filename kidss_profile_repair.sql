@@ -49,3 +49,17 @@ LEFT JOIN students s ON s.user_id=u.user_id
 WHERE (LOWER(r.role_name) IN ('admin','administrator') AND a.admin_id IS NULL)
    OR (LOWER(r.role_name)='teacher' AND t.teacher_id IS NULL)
    OR (LOWER(r.role_name)='student' AND s.student_id IS NULL);
+
+-- Keep the settings table available to class management and the settings page.
+CREATE TABLE IF NOT EXISTS system_settings (
+  setting_key VARCHAR(100) NOT NULL,
+  setting_value TEXT NOT NULL,
+  updated_by INT UNSIGNED DEFAULT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (setting_key),
+  KEY idx_system_settings_updated_by (updated_by)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO system_settings (setting_key, setting_value) VALUES
+  ('system_name', 'KIDSS'),
+  ('school_year', '2026-2027');
