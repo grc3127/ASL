@@ -4,10 +4,14 @@ function toggleAdminSidebar() {
 }
 
 function loadAdminPage(pageName) {
-    fetch(`admin_pages/${pageName}.php`, { credentials: 'same-origin' })
-        .then(response => {
-            if (!response.ok) throw new Error(`Unable to load ${pageName}.php`);
-            return response.text();
+    const pageUrl = new URL(`admin_pages/${encodeURIComponent(pageName)}.php`, document.baseURI);
+    fetch(pageUrl.href, { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(async response => {
+            if (!response.ok) throw new Error(`Unable to load ${pageName}.php (HTTP ${response.status}).`);
+            if (response.redirected && /login\\.php/i.test(response.url)) throw new Error('Your session may have expired. Please sign in again.');
+            const html = await response.text();
+            if (/^\\s*<!doctype html|^\\s*<html/i.test(html) && /name=[\"']password[\"']/i.test(html)) throw new Error('The requested page returned a login page. Please sign in again.');
+            return html;
         })
         .then(html => {
             const container = document.getElementById('admin-page-content');
