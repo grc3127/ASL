@@ -109,9 +109,39 @@ SQL;
         redirectToLogin();
     }
 
+    // Self-heal missing role profiles before routing into the portal.
+    // This prevents older databases without profile rows from breaking student,
+    // teacher, or administrator pages after login.
+    $role = strtolower((string) $user['role_name']);
+    $local = trim((string) strstr((string) $user['email'], '@', true));
+    if ($local === '') $local = (string) $user['username'];
+    $label = trim(preg_replace('/[._-]+/u', ' ', $local) ?? $local);
+    $nameParts = preg_split('/\\s+/u', $label, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    $profileFirst = ucfirst((string) array_shift($nameParts));
+    if ($profileFirst === '') $profileFirst = 'New';
+    $profileLast = $nameParts ? ucwords(implode(' ', $nameParts)) : 'User';
+
+    if ($role === 'student' && empty($user['student_id'])) {
+        $create = $pdo->prepare('INSERT INTO students (user_id, student_number, first_name, middle_name, last_name) VALUES (?, NULL, ?, NULL, ?)');
+        $create->execute([(int) $user['user_id'], $profileFirst, $profileLast]);
+        $user['student_id'] = (int) $pdo->lastInsertId();
+        $user['student_number'] = null;
+        $user['full_name'] = trim($profileFirst . ' ' . $profileLast);
+    } elseif ($role === 'teacher' && empty($user['teacher_id'])) {
+        $create = $pdo->prepare('INSERT INTO teachers (user_id, employee_number, first_name, middle_name, last_name) VALUES (?, NULL, ?, NULL, ?)');
+        $create->execute([(int) $user['user_id'], $profileFirst, $profileLast]);
+        $user['teacher_id'] = (int) $pdo->lastInsertId();
+        $user['employee_number'] = null;
+        $user['full_name'] = trim($profileFirst . ' ' . $profileLast);
+    } elseif (in_array($role, ['admin', 'administrator'], true) && empty($user['admin_id'])) {
+        $create = $pdo->prepare('INSERT INTO admins (user_id, first_name, middle_name, last_name) VALUES (?, ?, NULL, ?)');
+        $create->execute([(int) $user['user_id'], $profileFirst, $profileLast]);
+        $user['admin_id'] = (int) $pdo->lastInsertId();
+        $user['full_name'] = trim($profileFirst . ' ' . $profileLast);
+    }
+
     session_regenerate_id(true);
 
-    $role = strtolower((string) $user['role_name']);
 
     $_SESSION['logged_in'] = true;
     $_SESSION['user_id'] = (int) $user['user_id'];
