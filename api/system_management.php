@@ -33,7 +33,14 @@ try {
         $s=$pdo->prepare('SELECT teacher_id FROM teachers WHERE user_id=?');
         $s->execute([$user['user_id']]);
         $teacherId=(int)$s->fetchColumn();
-        if (!$teacherId) out(['success'=>false,'message'=>'Teacher profile is missing.'],422);
+        if (!$teacherId) {
+            $account=$pdo->prepare('SELECT username,email FROM users WHERE user_id=?');$account->execute([$user['user_id']]);$account=$account->fetch();
+            if(!$account)out(['success'=>false,'message'=>'Teacher account was not found.'],404);
+            $local=trim((string)strstr((string)$account['email'],'@',true));if($local==='')$local=(string)$account['username'];
+            $label=trim(preg_replace('/[._-]+/u',' ',$local)??$local);$parts=preg_split('/\\s+/u',$label,-1,PREG_SPLIT_NO_EMPTY)?:[];
+            $first=ucfirst((string)array_shift($parts));if($first==='')$first='New';$last=$parts?ucwords(implode(' ',$parts)):'User';
+            $create=$pdo->prepare('INSERT INTO teachers(user_id,employee_number,first_name,middle_name,last_name) VALUES(?,NULL,?,NULL,?)');$create->execute([$user['user_id'],$first,$last]);$teacherId=(int)$pdo->lastInsertId();
+        }
     }
     if ($_SERVER['REQUEST_METHOD']==='GET') {
         $view=(string)($_GET['view']??'');
@@ -164,8 +171,8 @@ try {
         $pdo->beginTransaction();
         try {
             $q=$pdo->prepare('UPDATE users SET username=?,email=? WHERE user_id=?');$q->execute([$username,$email,$userId]);
-            if($target['role_name']==='student'){$identifier=trim((string)($d['identifier']??''));$q=$pdo->prepare('UPDATE students SET first_name=?,middle_name=?,last_name=?,student_number=? WHERE user_id=?');$q->execute([$first,$middle?:null,$last,$identifier?:null,$userId]);}
-            else {$identifier=trim((string)($d['identifier']??''));$q=$pdo->prepare('UPDATE teachers SET first_name=?,middle_name=?,last_name=?,employee_number=? WHERE user_id=?');$q->execute([$first,$middle?:null,$last,$identifier?:null,$userId]);}
+            if($target['role_name']==='student'){$identifier=trim((string)($d['identifier']??''));$q=$pdo->prepare('INSERT INTO students(user_id,first_name,middle_name,last_name,student_number) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE first_name=VALUES(first_name),middle_name=VALUES(middle_name),last_name=VALUES(last_name),student_number=VALUES(student_number)');$q->execute([$userId,$first,$middle?:null,$last,$identifier?:null]);}
+            else {$identifier=trim((string)($d['identifier']??''));$q=$pdo->prepare('INSERT INTO teachers(user_id,first_name,middle_name,last_name,employee_number) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE first_name=VALUES(first_name),middle_name=VALUES(middle_name),last_name=VALUES(last_name),employee_number=VALUES(employee_number)');$q->execute([$userId,$first,$middle?:null,$last,$identifier?:null]);}
             logAction($pdo,$user['user_id'],'account_updated',"Updated {$target['role_name']} account {$userId}");
             $pdo->commit();
         } catch(Throwable $e) {$pdo->rollBack();throw $e;}
