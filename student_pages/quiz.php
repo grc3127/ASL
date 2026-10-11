@@ -39,9 +39,20 @@
  function showResults(){bar.style.width='100%';scoreLabel.textContent=score+' / '+order.length;const pct=order.length?Math.round(score/order.length*100):0;content.innerHTML='<div class="kq-card kq-results"><div class="display-4 text-warning"><i class="bi bi-trophy-fill"></i></div><h2 class="h3 fw-bold">Quiz progress saved</h2><p class="kq-muted">Your completed attempt is stored in the database. Opening this category again will keep this result until you choose to start a new attempt.</p><strong>'+score+' / '+order.length+' ('+pct+'%)</strong><p>'+(pct>=75?'Great work! You passed this practice quiz.':'Keep practicing and try again when you are ready.')+'</p><button type="button" class="kq-btn" id="kqRestart">Start a new attempt</button></div>';document.getElementById('kqRestart').addEventListener('click',restart)}
  async function restart(){const ids=shuffle(items.map(x=>Number(x.lesson_id)));try{await request(endpoint,{action:'restart',category_id:Number(data.category_id),question_order:ids});order=ids;answers={};index=0;score=0;completed=false;saveStatus.textContent='New attempt started';msg('A new attempt has started. Your previous completed result remains in your quiz history.',true);await persist();render()}catch(e){msg(e.message)}}
  async function load(categoryId){content.innerHTML='<div class="kq-card kq-empty">Loading your published lessons and saved progress…</div>';try{data=await request(endpoint+'?'+(categoryId?'category_id='+encodeURIComponent(categoryId):''));categorySelect.innerHTML=(data.categories||[]).map(c=>'<option value="'+c.category_id+'">'+esc(c.category_name)+'</option>').join('');if(!data.categories||!data.categories.length){content.innerHTML='<div class="kq-card kq-empty">No active lesson categories are available yet.</div>';return}categorySelect.value=String(data.category_id);items=data.items||[];itemById={};items.forEach(i=>itemById[Number(i.lesson_id)]=i);const state=data.state;
- if(state){order=(state.question_order||[]).map(Number).filter(id=>itemById[id]);const present=new Set(order);items.forEach(i=>{const id=Number(i.lesson_id);if(!present.has(id)){order.push(id);present.add(id)}});answers=state.answers||{};score=Number(state.score)||0;index=Math.min(Number(state.question_index)||0,Math.max(0,order.length-1));completed=!!state.completed;if(!completed&&(!state.question_order||!state.question_order.length)){order=shuffle(items.map(i=>Number(i.lesson_id)));index=0;answers={};score=0;await request(endpoint,{action:'restart',category_id:Number(data.category_id),question_order:order})}}
- else{order=shuffle(items.map(i=>Number(i.lesson_id)));answers={};index=0;score=0;completed=false;if(order.length)await request(endpoint,{action:'restart',category_id:Number(data.category_id),question_order:order})}
- saveStatus.textContent=state?'Saved progress loaded · '+(state.updated_at||''):'New attempt';if(!completed)await persist();render()
+ const availableIds=items.map(i=>Number(i.lesson_id));
+ const savedOrder=state&&Array.isArray(state.question_order)?state.question_order.map(Number):[];
+ const savedSet=new Set(savedOrder);
+ const savedOrderValid=!!state&&savedOrder.length>0&&savedSet.size===savedOrder.length&&savedOrder.every(id=>itemById[id])&&availableIds.every(id=>savedSet.has(id));
+ const savedIndex=state?Number(state.question_index):0;
+ const resetState=!savedOrderValid||!Number.isInteger(savedIndex)||savedIndex<0||(!state?.completed&&savedIndex>=savedOrder.length);
+ if(state&&!resetState){
+  order=savedOrder;answers=state.answers&&typeof state.answers==='object'&&!Array.isArray(state.answers)?state.answers:{};score=Number(state.score)||0;index=Math.min(savedIndex,Math.max(0,order.length-1));completed=!!state.completed;
+ }else{
+  order=shuffle(availableIds);answers={};index=0;score=0;completed=false;
+  if(order.length)await request(endpoint,{action:'restart',category_id:Number(data.category_id),question_order:order});
+ }
+ saveStatus.textContent=state&&!resetState?'Saved progress loaded · '+(state.updated_at||''):(resetState?'Outdated quiz progress reset':'New attempt');
+ if(!completed&&order.length)await persist();render()
  }catch(e){content.innerHTML='<div class="kq-card kq-empty">'+esc(e.message)+'</div>';msg(e.message)}}
  categorySelect.addEventListener('change',()=>load(Number(categorySelect.value)));load();
 })();
