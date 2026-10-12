@@ -12,11 +12,11 @@ function ensureBasicGreetings(PDO $pdo): void
     if (!is_dir($absoluteDir)) return;
 
     $greetings = [
-        'Good Morning' => ['[IMG] Good Morning.jpg', '[VID] Good Morning.mp4'],
-        'Good Night'   => ['[IMG] Good Night.jpg', '[VID] Good Night.mp4'],
-        'Hello'        => ['[IMG] Hello.jpg', '[VID] Hello.mp4'],
-        'Thank You'    => ['[IMG] Thank You.jpg', '[VID] Thank You.mp4'],
-        'Welcome'      => ['[IMG] Welcome.jpg', '[VID] You_re Welcome.mp4'],
+        'Good Morning' => ['Good Morning', '[IMG] Good Morning.jpg', '[VID] Good Morning.mp4'],
+        'Good Night'   => ['Good Night', '[IMG] Good Night.jpg', '[VID] Good Night.mp4'],
+        'Hello'        => ['Hello', '[IMG] Hello.jpg', '[VID] Hello.mp4'],
+        'Thank You'    => ['Thank You', '[IMG] Thank You.jpg', '[VID] Thank You.mp4'],
+        'Welcome'      => ['Welcome', '[IMG] Welcome.jpg', '[VID] You_re Welcome.mp4'],
     ];
 
     $pdo->beginTransaction();
@@ -33,7 +33,7 @@ function ensureBasicGreetings(PDO $pdo): void
             $activate->execute([$categoryId]);
         }
 
-        foreach ($greetings as $title => [$imageName, $videoName]) {
+        foreach ($greetings as $position => [$title, $imageName, $videoName]) {
             $imagePath = $relativeDir . '/' . $imageName;
             $videoPath = $relativeDir . '/' . $videoName;
             if (!is_file(dirname(__DIR__) . '/' . $imagePath)) continue;
@@ -49,7 +49,7 @@ function ensureBasicGreetings(PDO $pdo): void
                 $update->execute([$categoryId, $thumbnail, 'Learn the sign for ' . $title . '.', $lessonId]);
             } else {
                 $insert = $pdo->prepare("INSERT INTO lessons(category_id,title,description,thumbnail,display_order,status) VALUES(?,?,?,?,?,'published')");
-                $insert->execute([$categoryId, $title, 'Learn the sign for ' . $title . '.', $imagePath, count($greetings)]);
+                $insert->execute([$categoryId, $title, 'Learn the sign for ' . $title . '.', $imagePath, $position + 1]);
                 $lessonId = (int)$pdo->lastInsertId();
             }
 
