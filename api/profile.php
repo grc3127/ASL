@@ -2,7 +2,15 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../auth/guard.php'; requireLogin(); require_once __DIR__ . '/../config/database.php';
 header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store');
-function profileOut(array $d,int $status=200):never{http_response_code($status);echo json_encode($d,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;}
+function normalizeProfileGender(string $value): string {
+ $value=mb_strtolower(trim($value));
+ if(in_array($value,['','prefer not to say','prefer_not_to_say','unspecified','unknown','n/a'],true))return '';
+ if(in_array($value,['female','f','woman','girl'],true))return 'Female';
+ if(in_array($value,['male','m','man','boy'],true))return 'Male';
+ if(in_array($value,['other','nonbinary','non-binary'],true))return 'Other';
+ throw new InvalidArgumentException('Choose Female, Male, Other, or Prefer not to say.');
+}
+function profileOut(array $d,int $status=200):never{http_response_code($status);header('Content-Type: application/json; charset=utf-8');echo json_encode($d,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;}
 function ensureRoleProfile(PDO $pdo,string $role,int $userId):void{
  $map=['student'=>['students','student_id'],'teacher'=>['teachers','teacher_id'],'admin'=>['admins','admin_id'],'administrator'=>['admins','admin_id']];
  if(!isset($map[$role]))throw new RuntimeException('Unsupported account role.');
@@ -28,7 +36,7 @@ try{
  if($_SERVER['REQUEST_METHOD']==='GET'){
   $extra=$role==='student'?',p.birth_date,p.gender,p.profile_image':',NULL AS birth_date,NULL AS gender,NULL AS profile_image';
   $q=$pdo->prepare("SELECT u.username,u.email,u.created_at,u.last_login, p.{$idColumn} profile_id,p.first_name,p.middle_name,p.last_name,".($role==='student'?'p.student_number':($role==='teacher'?'p.employee_number':'NULL'))." AS identifier {$extra} FROM users u JOIN {$table} p ON p.user_id=u.user_id WHERE u.user_id=?");
-  $q->execute([$userId]);$p=$q->fetch();if(!$p)profileOut(['success'=>false,'message'=>'Profile record not found.'],404);profileOut(['success'=>true,'profile'=>$p]);
+  $q->execute([$userId]);$p=$q->fetch();if(!$p)profileOut(['success'=>false,'message'=>'Profile record not found.'],404);if($role==='student'){$rawGender=trim((string)($p['gender']??''));try{$p['gender']=normalizeProfileGender($rawGender);}catch(InvalidArgumentException $ignored){$p['gender']='';}}profileOut(['success'=>true,'profile'=>$p]);
  }
  if($_SERVER['REQUEST_METHOD']!=='POST')profileOut(['success'=>false,'message'=>'Method not allowed.'],405);
  $d=json_decode(file_get_contents('php://input')?:'',true);if(!is_array($d))$d=$_POST;
@@ -41,9 +49,9 @@ try{
   $q=$pdo->prepare('UPDATE users SET username=?,email=? WHERE user_id=?');$q->execute([$username,$email,$userId]);
   if($newPassword!==''){$q=$pdo->prepare('UPDATE users SET password_hash=? WHERE user_id=?');$q->execute([password_hash($newPassword,PASSWORD_DEFAULT),$userId]);}
   if($role==='student'){
-   $num=trim((string)($d['identifier']??''));$birthDate=trim((string)($d['birth_date']??''));$gender=trim((string)($d['gender']??''));
+   $num=trim((string)($d['identifier']??''));$birthDate=trim((string)($d['birth_date']??''));$gender=normalizeProfileGender((string)($d['gender']??''));
    if($birthDate!==''&&!preg_match('/^\d{4}-\d{2}-\d{2}$/',$birthDate))throw new InvalidArgumentException('Enter a valid date of birth.');
-   if($gender!==''&&mb_strlen($gender)>20)throw new InvalidArgumentException('Gender field is too long.');
+   if($gender!==''&&mb_strlen($gender)>20)throw new InvalidArgumentException('Choose a valid gender option.');
    $q=$pdo->prepare('UPDATE students SET student_number=?,birth_date=?,gender=? WHERE user_id=?');$q->execute([$num?:null,$birthDate?:null,$gender?:null,$userId]);
   }
   if($role==='teacher'){$num=trim((string)($d['identifier']??''));$q=$pdo->prepare('UPDATE teachers SET employee_number=? WHERE user_id=?');$q->execute([$num?:null,$userId]);}
