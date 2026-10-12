@@ -45,8 +45,8 @@ function ensureBasicGreetings(PDO $pdo): void
             if ($lesson) {
                 $lessonId = (int)$lesson['lesson_id'];
                 $thumbnail = trim((string)($lesson['thumbnail'] ?? '')) !== '' ? $lesson['thumbnail'] : $imagePath;
-                $update = $pdo->prepare("UPDATE lessons SET category_id=?,thumbnail=?,description=COALESCE(NULLIF(description,''),?),status=IF(status='archived','published',status) WHERE lesson_id=?");
-                $update->execute([$categoryId, $thumbnail, 'Learn the sign for ' . $title . '.', $lessonId]);
+                $update = $pdo->prepare("UPDATE lessons SET category_id=?,thumbnail=?,description=COALESCE(NULLIF(description,''),?),display_order=?,status=IF(status='archived','published',status) WHERE lesson_id=? AND (category_id<>? OR thumbnail IS NULL OR thumbnail='' OR description IS NULL OR description='' OR status='archived' OR display_order<>?)");
+                $update->execute([$categoryId, $thumbnail, 'Learn the sign for ' . $title . '.', $position + 1, $lessonId, $categoryId, $position + 1]);
             } else {
                 $insert = $pdo->prepare("INSERT INTO lessons(category_id,title,description,thumbnail,display_order,status) VALUES(?,?,?,?,?,'published')");
                 $insert->execute([$categoryId, $title, 'Learn the sign for ' . $title . '.', $imagePath, $position + 1]);
