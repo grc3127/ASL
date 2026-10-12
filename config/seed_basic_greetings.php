@@ -33,7 +33,7 @@ function ensureBasicGreetings(PDO $pdo): void
             $activate->execute([$categoryId]);
         }
 
-        foreach ($greetings as $position => [$title, $imageName, $videoName]) {
+        foreach (array_values($greetings) as $position => [$title, $imageName, $videoName]) {
             $imagePath = $relativeDir . '/' . $imageName;
             $videoPath = $relativeDir . '/' . $videoName;
             if (!is_file(dirname(__DIR__) . '/' . $imagePath)) continue;
