@@ -146,9 +146,9 @@ unset($_SESSION['login_error']);
 
         </form>
 
-        <p class="text-center mt-4 mb-0">
+        <!-- <p class="text-center mt-4 mb-0">
             Don't have an account? <a href="#">Sign up here</a>
-        </p>
+        </p> -->
 
         <div class="text-center mb-3 mt-4 text-muted small">
             <p class="mb-0">&copy; <span id="year"></span> KIDSS - Kindergarten Interactive Digital Signing System. All rights reserved.</p>

@@ -71,11 +71,7 @@ $features = [
       </span>
     </a>
     <nav class="main-nav" aria-label="Main">
-      <?php foreach ($nav as $item): ?>
-        <a href="<?= e($item['href']) ?>" class="nav-link<?= $activePage === $item['key'] ? ' active' : '' ?>">
-          <?= icon($item['key'], 23, $item['key'] === 'lessons' || $item['key'] === 'games' ? 1.9 : 2.1) ?><span><?= e($item['label']) ?></span>
-        </a>
-      <?php endforeach; ?>
+      
     </nav>
     <a href="login.php" class="btn-login"><?= icon('user', 22, 1.8) ?><span>Login</span></a>
   </div>
