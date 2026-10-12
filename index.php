@@ -42,11 +42,11 @@ $nav = [
     ['key'=>'about','label'=>'About','href'=>'#about'],
 ];
 $features = [
-    ['title'=>'Video Lessons','icon'=>'assets/icon1.png','theme'=>'purple','href'=>'login.php','text'=>'Watch and learn signs through fun and engaging lessons.'],
-    ['title'=>'Practice Signs','icon'=>'assets/icon2.png','theme'=>'green','href'=>'login.php','text'=>'Practice ASL letters and words with interactive exercises.'],
-    ['title'=>'Fun Games','icon'=>'assets/icon3.png','theme'=>'yellow','href'=>'login.php','text'=>'Play exciting activities that help you learn and remember signs!'],
-    ['title'=>'My Progress','icon'=>'assets/icon4.png','theme'=>'blue','href'=>'login.php','text'=>'Track your learning progress and achievements.'],
-    ['title'=>'For Teachers','icon'=>'assets/icon5.png','theme'=>'pink','href'=>'login.php','text'=>'Access teaching tools, resources, and student progress.'],
+    ['title'=>'Video Lessons','icon'=>'assets/img/icon1.png','theme'=>'purple','href'=>'login.php','text'=>'Watch and learn signs through fun and engaging lessons.'],
+    ['title'=>'Practice Signs','icon'=>'assets/img/icon2.png','theme'=>'green','href'=>'login.php','text'=>'Practice ASL letters and words with interactive exercises.'],
+    ['title'=>'Fun Games','icon'=>'assets/img/icon3.png','theme'=>'yellow','href'=>'login.php','text'=>'Play exciting activities that help you learn and remember signs!'],
+    ['title'=>'My Progress','icon'=>'assets/img/icon4.png','theme'=>'blue','href'=>'login.php','text'=>'Track your learning progress and achievements.'],
+    ['title'=>'For Teachers','icon'=>'assets/img/icon5.png','theme'=>'pink','href'=>'login.php','text'=>'Access teaching tools, resources, and student progress.'],
 ];
 ?>
 <!DOCTYPE html>
@@ -64,7 +64,7 @@ $features = [
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="brand" href="index.php">
-      <img src="assets/logo.png" alt="KIDSS logo" class="brand-logo">
+      <img src="assets/img/logo.png" alt="KIDSS logo" class="brand-logo">
       <span class="brand-text">
         <span class="brand-name" aria-label="<?= e($siteName) ?>"><span class="c1">K</span><span class="c2">I</span><span class="c3">D</span><span class="c4">S</span><span class="c5">S</span></span>
         <span class="brand-tag"><?= e($siteTag[0]) ?><br><?= e($siteTag[1]) ?></span>
@@ -105,7 +105,7 @@ $features = [
     <?php endforeach; ?>
   </div>
   <div class="strip">
-    <img src="assets/shield.png" alt="" class="strip-shield">
+    <img src="assets/img/shield.png" alt="" class="strip-shield">
     <strong>Safe • Fun • Educational</strong>
     <span>Designed especially for young learners to build confidence and communication skills.</span>
     <img src="assets/hearts.png" alt="" class="strip-hearts">
