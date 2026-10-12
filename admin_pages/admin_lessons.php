@@ -29,11 +29,11 @@ requireRole('admin', 'administrator', 'teacher');
      <div class="col-md-8"><label for="lessonTitle" class="form-label">Lesson title *</label><input id="lessonTitle" class="form-control" maxlength="150" required></div>
      <div class="col-md-4"><label for="lessonCategory" class="form-label">Category *</label><select id="lessonCategory" class="form-select" required></select></div>
      <div class="col-12"><label for="lessonDescription" class="form-label">Description / learning instructions</label><textarea id="lessonDescription" class="form-control" rows="3"></textarea></div>
-     <div class="col-md-6"><label for="lessonThumbnail" class="form-label">Thumbnail path (optional)</label><input id="lessonThumbnail" class="form-control" placeholder="assets/lesson-media/image-....png"><input type="file" class="form-control form-control-sm mt-2 lesson-media-file" data-upload-target="lessonThumbnail" data-media-type="thumbnail" accept="image/png,image/jpeg,image/gif,image/webp,image/avif" aria-label="Browse and upload thumbnail"><small class="text-muted">Choose an image to upload it and fill in the path automatically.</small></div>
+     <div class="col-md-6"><label for="lessonThumbnail" class="form-label">Thumbnail path (optional)</label><div class="input-group"><input id="lessonThumbnail" class="form-control" placeholder="assets/lesson-media/Basic Greetings/[IMG] Hello.jpg"><button type="button" class="btn btn-outline-secondary browse-media" data-target="lessonThumbnail" data-media-type="thumbnail">Browse files</button></div><small class="text-muted">Select an image already stored in the project; its relative path will be filled in.</small></div>
      <div class="col-md-6"><label for="lessonDisplayOrder" class="form-label">Display order</label><input id="lessonDisplayOrder" class="form-control" type="number" value="0" min="0"></div>
-     <div class="col-md-4"><label for="lessonImage" class="form-label">Image path</label><input id="lessonImage" class="form-control" placeholder="assets/lesson-media/image-....png"><input type="file" class="form-control form-control-sm mt-2 lesson-media-file" data-upload-target="lessonImage" data-media-type="image" accept="image/png,image/jpeg,image/gif,image/webp,image/avif" aria-label="Browse and upload lesson image"></div>
-     <div class="col-md-4"><label for="lessonAudio" class="form-label">Audio path</label><input id="lessonAudio" class="form-control" placeholder="assets/lesson-media/audio-....mp3"><input type="file" class="form-control form-control-sm mt-2 lesson-media-file" data-upload-target="lessonAudio" data-media-type="audio" accept="audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac,audio/webm" aria-label="Browse and upload lesson audio"></div>
-     <div class="col-md-4"><label for="lessonVideo" class="form-label">Video path</label><input id="lessonVideo" class="form-control" placeholder="assets/lesson-media/video-....mp4"><input type="file" class="form-control form-control-sm mt-2 lesson-media-file" data-upload-target="lessonVideo" data-media-type="video" accept="video/mp4,video/webm,video/ogg" aria-label="Browse and upload lesson video"></div>
+     <div class="col-md-4"><label for="lessonImage" class="form-label">Image path</label><div class="input-group"><input id="lessonImage" class="form-control" placeholder="assets/lesson-media/Basic Greetings/[IMG] Hello.jpg"><button type="button" class="btn btn-outline-secondary browse-media" data-target="lessonImage" data-media-type="image">Browse</button></div></div>
+     <div class="col-md-4"><label for="lessonAudio" class="form-label">Audio path</label><div class="input-group"><input id="lessonAudio" class="form-control" placeholder="assets/lesson-media/audio.mp3"><button type="button" class="btn btn-outline-secondary browse-media" data-target="lessonAudio" data-media-type="audio">Browse</button></div></div>
+     <div class="col-md-4"><label for="lessonVideo" class="form-label">Video path</label><div class="input-group"><input id="lessonVideo" class="form-control" placeholder="assets/lesson-media/Basic Greetings/[VID] Hello.mp4"><button type="button" class="btn btn-outline-secondary browse-media" data-target="lessonVideo" data-media-type="video">Browse</button></div></div>
      <div class="col-md-6"><label for="lessonStatus" class="form-label">Publication status</label><select id="lessonStatus" class="form-select"><option value="draft">Draft (hidden from students)</option><option value="published">Published (visible to students)</option><option value="archived">Archived (hidden from students)</option></select></div>
     </div>
     <p id="lessonUploadNotice" class="small mt-3 mb-0" role="status"></p>
@@ -41,6 +41,18 @@ requireRole('admin', 'administrator', 'teacher');
    </div>
    <div class="modal-footer"><button type="button" class="admin-btn admin-btn-light" data-bs-dismiss="modal">Cancel</button><button type="submit" class="admin-btn admin-btn-primary" id="saveLessonBtn">Save Lesson</button></div>
   </form>
+ </div></div>
+</div>
+<div class="modal fade" id="mediaBrowserModal" tabindex="-1" aria-labelledby="mediaBrowserTitle" aria-hidden="true">
+ <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title" id="mediaBrowserTitle">Choose an existing project asset</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+  <div class="modal-body">
+   <p class="text-muted small">Select a file already present under assets/. This only detects and fills in its project-relative path; it does not upload or copy files from your computer.</p>
+   <input id="mediaFileSearch" class="form-control mb-3" type="search" placeholder="Filter by file name or path">
+   <select id="mediaFileSelect" class="form-select" size="10" aria-label="Available project assets"></select>
+   <p id="mediaBrowserStatus" class="small text-muted mt-2 mb-0" role="status"></p>
+  </div>
+  <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="useMediaPathBtn">Use selected path</button></div>
  </div></div>
 </div>
 <script>
@@ -53,12 +65,15 @@ requireRole('admin', 'administrator', 'teacher');
  const notice=document.getElementById('lessonManagerNotice');
  const form=document.getElementById('lessonEditorForm');
  const modalElement=document.getElementById('lessonEditorModal');
- let editor=null,categories=[],lessons=[];
+ const mediaModalElement=document.getElementById('mediaBrowserModal');
+ const mediaSelect=document.getElementById('mediaFileSelect');
+ const mediaSearch=document.getElementById('mediaFileSearch');
+ let editor=null,mediaBrowser=null,mediaTarget=null,mediaFiles=[],categories=[],lessons=[];
  const $=id=>document.getElementById(id);
  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const media=(lesson,type)=>(lesson.media||[]).find(item=>item.media_type===type)?.file_path||'';
  function message(text,type='success'){notice.className='alert alert-'+type;notice.textContent=text;notice.classList.remove('d-none');}
- async function request(url,options){const response=await fetch(url,{credentials:'same-origin',headers:{'Accept':'application/json',...(options&&options.body?{'Content-Type':'application/json'}:{})},...options});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.message||'Request failed.');return data;}
+ async function request(url,options){const response=await fetch(url,{credentials:'same-origin',headers:{'Accept':'application/json',...(options&&options.body?{'Content-Type':'application/json'}:{})},...options});const raw=await response.text();let data;try{data=JSON.parse(raw)}catch(parseError){const detail=raw.replace(/<[^>]*>/g,' ').replace(/\\s+/g,' ').trim().slice(0,220);throw new Error('The server returned invalid JSON. '+(detail||'Check PHP/server logs.'))}if(!response.ok||!data.success)throw new Error(data.message||'Request failed.');return data;}
  function fillCategories(){
    filter.innerHTML='<option value="">All Categories</option>'+categories.map(c=>'<option value="'+Number(c.category_id)+'">'+esc(c.category_name)+'</option>').join('');
    categorySelect.innerHTML=categories.map(c=>'<option value="'+Number(c.category_id)+'">'+esc(c.category_name)+'</option>').join('');
@@ -76,7 +91,7 @@ requireRole('admin', 'administrator', 'teacher');
  }
  async function reload(){const data=await request(endpoint);categories=data.categories||[];lessons=data.lessons||[];fillCategories();renderRows();}
  function openEditor(lesson){
-   form.reset();$('lessonEditorId').value=lesson?lesson.lesson_id:'';$('lessonEditorTitle').textContent=lesson?'Edit Lesson':'Add Lesson';
+   form.reset();$('lessonEditorId').value=lesson?lesson.lesson_id:'';$('lessonEditorTitle').textContent=lesson?'Edit Lesson':'Add Lesson';$('saveLessonBtn').textContent=lesson?'Save Changes':'Create Lesson';$('lessonUploadNotice').textContent='';
    if(lesson){$('lessonTitle').value=lesson.title||'';$('lessonCategory').value=lesson.category_id;$('lessonDescription').value=lesson.description||'';$('lessonThumbnail').value=lesson.thumbnail||'';$('lessonDisplayOrder').value=lesson.display_order||0;$('lessonStatus').value=lesson.status||'draft';$('lessonImage').value=media(lesson,'image');$('lessonAudio').value=media(lesson,'audio');$('lessonVideo').value=media(lesson,'video');}
    if(window.bootstrap&&bootstrap.Modal){editor=bootstrap.Modal.getOrCreateInstance(modalElement);editor.show();}
    else message('Bootstrap modal is unavailable. Please check assets/bootstrap/js/bootstrap.bundle.min.js on the dashboard.','danger');
@@ -89,14 +104,31 @@ requireRole('admin', 'administrator', 'teacher');
    catch(error){message(error.message,'danger');}
  });
  search.addEventListener('input',renderRows);filter.addEventListener('change',renderRows);
- document.querySelectorAll('.lesson-media-file').forEach(input=>input.addEventListener('change',async()=>{
-   const file=input.files&&input.files[0];if(!file)return;
-   const target=$(input.dataset.uploadTarget),status=$('lessonUploadNotice');const payload=new FormData();payload.append('action','upload_media');payload.append('media_type',input.dataset.mediaType);payload.append('file',file);
-   input.disabled=true;status.className='small mt-3 text-muted';status.textContent='Uploading '+file.name+'…';
-   try{const response=await fetch(endpoint,{method:'POST',credentials:'same-origin',body:payload});const data=await response.json();if(!response.ok||!data.success)throw new Error(data.message||'Upload failed.');target.value=data.file_path;status.className='small mt-3 text-success';status.textContent='Uploaded '+file.name+'. The path has been filled in; save the lesson to apply it.';}
-   catch(error){status.className='small mt-3 text-danger';status.textContent=error.message;}
-   finally{input.disabled=false;input.value='';}
- }));
+ function renderMediaOptions(){
+   const term=mediaSearch.value.trim().toLowerCase();
+   const matches=mediaFiles.filter(file=>(file.path+' '+file.name).toLowerCase().includes(term));
+   mediaSelect.innerHTML=matches.map(file=>'<option value="'+esc(file.path)+'">'+esc(file.path)+'</option>').join('');
+   $('mediaBrowserStatus').textContent=matches.length+' matching file(s).';
+   if(matches.length)mediaSelect.selectedIndex=0;
+ }
+ async function openMediaBrowser(target,type){
+   mediaTarget=target;mediaFiles=[];mediaSearch.value='';mediaSelect.innerHTML='<option>Loading project files…</option>';
+   $('mediaBrowserStatus').textContent='Scanning existing assets…';
+   if(window.bootstrap&&bootstrap.Modal){mediaBrowser=bootstrap.Modal.getOrCreateInstance(mediaModalElement);mediaBrowser.show();}
+   else {message('Bootstrap modal is unavailable.','danger');return;}
+   try{const result=await request(endpoint+'?action=list_files&media_type='+encodeURIComponent(type));mediaFiles=result.files||[];renderMediaOptions();if(!mediaFiles.length)$('mediaBrowserStatus').textContent='No matching files were found under assets/. Add the file to the project first.';}
+   catch(error){mediaSelect.innerHTML='';$('mediaBrowserStatus').textContent=error.message;}
+ }
+ document.querySelectorAll('.browse-media').forEach(button=>button.addEventListener('click',()=>openMediaBrowser(button.dataset.target,button.dataset.mediaType)));
+ mediaSearch.addEventListener('input',renderMediaOptions);
+ $('useMediaPathBtn').addEventListener('click',()=>{
+   const path=mediaSelect.value;
+   if(!path||!mediaTarget){$('mediaBrowserStatus').textContent='Choose a file first.';return;}
+   $(mediaTarget).value=path;
+   $('lessonUploadNotice').className='small mt-3 text-success';
+   $('lessonUploadNotice').textContent='Selected existing asset: '+path+'. Save the lesson to apply the path.';
+   if(mediaBrowser)mediaBrowser.hide();
+ });
 
  rows.addEventListener('click',async event=>{
    const edit=event.target.closest('[data-edit]');
