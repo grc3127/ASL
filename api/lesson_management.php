@@ -34,6 +34,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $getAction = (string)($_GET['action'] ?? '');
         if ($getAction === 'list_files') {
+            if (!$isManager) respond(['success'=>false,'message'=>'Only teachers and administrators can browse project assets.'],403);
             $requestedType = (string)($_GET['media_type'] ?? 'image');
             $group = $requestedType === 'thumbnail' ? 'image' : $requestedType;
             $extensions = [
