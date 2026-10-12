@@ -1,12 +1,14 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/../auth/guard.php'; requireRole('student'); require_once __DIR__ . '/../config/database.php'; require_once __DIR__ . '/achievement_engine.php';
+require_once __DIR__ . '/../auth/guard.php'; requireRole('student'); require_once __DIR__ . '/../config/database.php'; require_once __DIR__ . '/achievement_engine.php'; require_once __DIR__ . '/../config/seed_basic_greetings.php';
+ob_start();
 header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store');
-function quizOut(array $d,int $code=200):never{http_response_code($code);echo json_encode($d,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;}
+function quizOut(array $d,int $code=200):never{while(ob_get_level()>0)ob_end_clean();http_response_code($code);header('Content-Type: application/json; charset=utf-8');echo json_encode($d,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;}
 function quizInput():array{$d=json_decode(file_get_contents('php://input')?:'',true);return is_array($d)?$d:$_POST;}
 try{
  $q=$pdo->prepare('SELECT student_id FROM students WHERE user_id=?');$q->execute([(int)$_SESSION['user_id']]);$studentId=(int)$q->fetchColumn();if(!$studentId)quizOut(['success'=>false,'message'=>'Student profile not found.'],422);
  if($_SERVER['REQUEST_METHOD']==='GET'){
+  ensureBasicGreetings($pdo);
   $cats=$pdo->query("SELECT c.category_id,c.category_name,COUNT(l.lesson_id) lesson_count FROM lesson_categories c JOIN lessons l ON l.category_id=c.category_id AND l.status='published' WHERE c.status='active' GROUP BY c.category_id,c.category_name,c.display_order ORDER BY c.display_order,c.category_name")->fetchAll();
   $categoryId=(int)($_GET['category_id']??($cats[0]['category_id']??0));
   if(!$categoryId)quizOut(['success'=>true,'categories'=>$cats,'items'=>[],'state'=>null,'category_id'=>0]);
@@ -22,6 +24,7 @@ try{
   $s->execute([$categoryId]);$items=$s->fetchAll();
   foreach($items as &$item){
    $title=(string)$item['title'];$letter=(preg_match('/^[A-Z]$/i',$title)===1)?strtoupper($title):'';
+   if(!$item['image_path']&&$letter&&is_file(__DIR__.'/../assets/lesson-media/Image/'.$letter.'.png'))$item['image_path']='assets/lesson-media/Image/'.$letter.'.png';
    if(!$item['image_path']&&$letter&&is_file(__DIR__.'/../assets/quiz/images/'.$letter.'.png'))$item['image_path']='assets/quiz/images/'.$letter.'.png';
    if(!$item['audio_path']&&$letter&&is_file(__DIR__.'/../assets/quiz/audio/'.$letter.'.mp3'))$item['audio_path']='assets/quiz/audio/'.$letter.'.mp3';
    if(!$item['video_path']&&$letter&&is_file(__DIR__.'/../assets/quiz/videos/'.$letter.'.mp4'))$item['video_path']='assets/quiz/videos/'.$letter.'.mp4';
@@ -29,13 +32,15 @@ try{
    unset($item['image_path'],$item['audio_path'],$item['video_path']);
   }unset($item);
   $items=array_values(array_filter($items,fn($i)=>!empty($i['image'])));
+  $poolStmt=$pdo->query("SELECT DISTINCT l.title FROM lessons l JOIN lesson_categories c ON c.category_id=l.category_id AND c.status='active' WHERE l.status='published' ORDER BY l.title");
+  $choicePool=array_values(array_map(static fn($row)=>(string)$row['title'],$poolStmt->fetchAll()));
   $title='Practice: '.$category['category_name'];
   $find=$pdo->prepare("SELECT quiz_id,status FROM quizzes WHERE lesson_id IS NULL AND title=? LIMIT 1");$find->execute([$title]);$quizRow=$find->fetch();$quizId=(int)($quizRow['quiz_id']??0);
   if($quizId && $quizRow['status']!=='published')quizOut(['success'=>false,'message'=>'This category quiz is not currently published by the administrator.'],403);
   if(!$quizId){$ins=$pdo->prepare("INSERT INTO quizzes(lesson_id,title,description,passing_score,status) VALUES(NULL,?,?,75,'published')");$ins->execute([$title,'Automatically generated practice quiz for the published lessons in '.$category['category_name'].'.']);$quizId=(int)$pdo->lastInsertId();}
   $st=$pdo->prepare('SELECT question_index,score,question_order_json,answers_json,completed,updated_at FROM student_quiz_state WHERE student_id=? AND category_id=?');$st->execute([$studentId,$categoryId]);$state=$st->fetch()?:null;
   if($state){$state['question_order']=json_decode($state['question_order_json'],true)?:[];$state['answers']=json_decode($state['answers_json'],true)?:[];$state['question_index']=(int)$state['question_index'];$state['score']=(int)$state['score'];$state['completed']=(bool)$state['completed'];unset($state['question_order_json'],$state['answers_json']);}
-  quizOut(['success'=>true,'categories'=>$cats,'category'=>$category,'category_id'=>$categoryId,'quiz_id'=>$quizId,'items'=>$items,'state'=>$state]);
+  quizOut(['success'=>true,'categories'=>$cats,'category'=>$category,'category_id'=>$categoryId,'quiz_id'=>$quizId,'items'=>$items,'choice_pool'=>$choicePool,'state'=>$state]);
  }
  if($_SERVER['REQUEST_METHOD']!=='POST')quizOut(['success'=>false,'message'=>'Method not allowed.'],405);
  $d=quizInput();$action=(string)($d['action']??'');$categoryId=(int)($d['category_id']??0);
