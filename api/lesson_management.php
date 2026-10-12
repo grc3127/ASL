@@ -66,7 +66,7 @@ try {
             usort($files, static fn($a,$b)=>strnatcasecmp($a['path'],$b['path']));
             respond(['success'=>true,'files'=>$files,'media_type'=>$requestedType]);
         }
-        if ($isManager) ensureBasicGreetings($pdo);
+        ensureBasicGreetings($pdo);
         $categories = $pdo->query("SELECT category_id, category_name, description, display_order FROM lesson_categories WHERE status='active' ORDER BY display_order, category_name")->fetchAll();
         $sql = "SELECT l.lesson_id, l.category_id, c.category_name, l.title, l.description, l.thumbnail, l.display_order, l.status, l.created_at, l.updated_at
                 FROM lessons l INNER JOIN lesson_categories c ON c.category_id=l.category_id";
