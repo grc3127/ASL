@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
+ob_start();
 require_once __DIR__ . '/../auth/guard.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/achievement_engine.php';
+require_once __DIR__ . '/../config/seed_basic_greetings.php';
 
 header('Content-Type: application/json; charset=utf-8');
 $role = strtolower((string)($_SESSION['role'] ?? ''));
@@ -13,6 +15,8 @@ if (!$isManager && $role !== 'student') {
     exit;
 }
 function respond(array $data, int $code = 200): never {
+    while (ob_get_level() > 0) ob_end_clean();
+    header('Content-Type: application/json; charset=utf-8');
     http_response_code($code);
     echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;
@@ -28,6 +32,40 @@ function logLessonActivity(PDO $pdo, string $action, string $description): void 
 }
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $getAction = (string)($_GET['action'] ?? '');
+        if ($getAction === 'list_files') {
+            $requestedType = (string)($_GET['media_type'] ?? 'image');
+            $group = $requestedType === 'thumbnail' ? 'image' : $requestedType;
+            $extensions = [
+                'image' => ['jpg','jpeg','png','gif','webp','avif'],
+                'audio' => ['mp3','wav','ogg','m4a','aac','weba'],
+                'video' => ['mp4','webm','ogv','ogg']
+            ];
+            if (!isset($extensions[$group])) respond(['success'=>false,'message'=>'Choose a valid media type.'],422);
+            $projectRoot = realpath(__DIR__ . '/..');
+            $roots = ['assets/lesson-media','assets/img','assets/quiz'];
+            $files = [];
+            foreach ($roots as $relativeRoot) {
+                $absoluteRoot = $projectRoot ? realpath($projectRoot . '/' . $relativeRoot) : false;
+                if (!$absoluteRoot || !is_dir($absoluteRoot)) continue;
+                try {
+                    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absoluteRoot, FilesystemIterator::SKIP_DOTS));
+                    foreach ($iterator as $entry) {
+                        if (!$entry->isFile()) continue;
+                        $real = $entry->getRealPath();
+                        if (!$real || !$projectRoot || strpos($real, $projectRoot . DIRECTORY_SEPARATOR) !== 0) continue;
+                        $ext = strtolower($entry->getExtension());
+                        if (!in_array($ext, $extensions[$group], true)) continue;
+                        $path = str_replace(DIRECTORY_SEPARATOR, '/', substr($real, strlen($projectRoot) + 1));
+                        $files[] = ['path'=>$path,'name'=>$entry->getFilename(),'size'=>$entry->getSize()];
+                        if (count($files) >= 500) break 2;
+                    }
+                } catch (Throwable $ignored) { /* Skip unreadable asset folders. */ }
+            }
+            usort($files, static fn($a,$b)=>strnatcasecmp($a['path'],$b['path']));
+            respond(['success'=>true,'files'=>$files,'media_type'=>$requestedType]);
+        }
+        if ($isManager) ensureBasicGreetings($pdo);
         $categories = $pdo->query("SELECT category_id, category_name, description, display_order FROM lesson_categories WHERE status='active' ORDER BY display_order, category_name")->fetchAll();
         $sql = "SELECT l.lesson_id, l.category_id, c.category_name, l.title, l.description, l.thumbnail, l.display_order, l.status, l.created_at, l.updated_at
                 FROM lessons l INNER JOIN lesson_categories c ON c.category_id=l.category_id";
