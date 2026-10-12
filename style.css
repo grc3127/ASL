@@ -1,0 +1,38 @@
+/* KIDSS landing page */
+:root{--navy:#1c2a55;--text:#2b3140;--blue:#2f6fe6;--pink:#ec4f7c;--green:#3dbd6c;--purple:#7b58d8;--nav-active:#4d6ac0}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:"Nunito",system-ui,sans-serif;color:var(--text);background:#fefcfb;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}img{display:block;max-width:100%}.ico{flex:none}.wrap{max-width:1536px;margin:0 auto}
+.site-header{background:#fff;min-height:112px;position:relative;z-index:5}
+.header-inner{min-height:112px;display:flex;align-items:center;padding:0 35px 0 28px}
+.brand{display:flex;align-items:center;gap:12px}.brand-logo{width:96px;height:92px;object-fit:contain}.brand-text{display:flex;flex-direction:column}
+.brand-name{font-family:"Fredoka",sans-serif;font-weight:700;font-size:58px;line-height:.9;letter-spacing:1px;margin-bottom:4px;text-shadow:0 2px 0 rgba(0,0,0,.06)}
+.brand-name .c1{color:#7b59d8}.brand-name .c2{color:#ee5a3c}.brand-name .c3{color:#fbb829}.brand-name .c4{color:#9fcb3c}.brand-name .c5{color:#3fb47a}
+.brand-tag{font-size:14.5px;line-height:17px;font-weight:600;color:var(--navy)}
+.main-nav{display:flex;align-items:center;gap:12px;margin-left:clamp(20px,5vw,85px)}
+.nav-link{display:flex;align-items:center;gap:9px;min-height:43px;padding:0 14px;border-radius:12px;font-size:17px;font-weight:600;color:var(--navy);transition:background .2s,color .2s}
+.nav-link:hover{background:#eef2fd}.nav-link.active{background:var(--nav-active);color:#fff;box-shadow:0 4px 10px rgba(77,106,192,.25)}
+.btn-login{margin-left:auto;display:flex;align-items:center;gap:8px;min-height:54px;padding:0 24px;border:1.6px solid #3554a8;border-radius:28px;font-size:17px;font-weight:600;color:var(--navy);background:#fff;white-space:nowrap}
+.btn-login:hover{background:#f1f4fd}
+.hero{min-height:536px;background:#e4f7fe url("assets/hero.jpg") center top/auto 100% no-repeat}
+.hero-inner{min-height:536px;padding:58px 24px 70px 6.1%}.hero h1{font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(48px,5.9vw,90px);line-height:.92;letter-spacing:-.5px;margin-left:-4px}
+.t-blue{color:var(--blue)}.t-pink{color:var(--pink)}.t-green{color:var(--green)}.t-navy{color:var(--navy)}
+.hero p{margin-top:20px;font-size:21px;line-height:1.5;font-weight:500;color:#1e2744}
+.hero-actions{display:flex;flex-wrap:wrap;gap:18px 29px;margin-top:30px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:62px;border-radius:33px;font-size:20px;font-weight:700;transition:transform .15s,box-shadow .2s;padding:0 22px}
+.btn:hover{transform:translateY(-2px)}.btn-primary{min-width:220px;color:#fff;background:linear-gradient(180deg,#3f84f1,#2f6fe3);box-shadow:0 8px 18px rgba(47,111,227,.32)}
+.btn-white{min-width:205px;color:#2c4a8e;background:#fff;box-shadow:0 6px 18px rgba(30,60,120,.10)}.btn-white .ico{color:#3a6fe0}
+.features-panel{position:relative;max-width:1465px;margin:-45px auto 0;background:#fdf9f7;border-radius:38px 38px 0 0;padding:27px 15px 10px}
+.features{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;padding:0 12px}
+.card{background:#fff;border-radius:22px;padding:7px;box-shadow:0 4px 14px rgba(40,40,80,.07);transition:transform .2s,box-shadow .2s;min-width:0}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(40,40,80,.12)}
+.card-inner{min-height:294px;height:100%;border-radius:17px;text-align:center;display:flex;flex-direction:column;align-items:center;padding:13px 16px 0}
+.card-icon{width:116px;height:104px;object-fit:contain;margin-bottom:6px}.card h2{font-size:21px;font-weight:800;color:#141d3f;line-height:1.2}.card p{font-size:15.5px;line-height:1.55;font-weight:500;color:#2f3443;margin-top:7px;max-width:210px}
+.btn-explore{margin-top:auto;margin-bottom:16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:135px;min-height:35px;border-radius:18px;color:#fff;font-size:17px;font-weight:700}
+.card-purple .card-inner{background:#f2effc}.card-purple .btn-explore{background:#7b58d8}.card-green .card-inner{background:#edf8ec}.card-green .btn-explore{background:#3fb87c}.card-yellow .card-inner{background:#fdf6e1}.card-yellow .btn-explore{background:#fca50b}.card-blue .card-inner{background:#e7f4fd}.card-blue .btn-explore{background:#2f9bf8}.card-pink .card-inner{background:#fdeaee}.card-pink .btn-explore{background:#ec5582}
+.strip{position:relative;display:flex;align-items:center;gap:16px;min-height:60px;margin:18px 0 0;padding:10px 36px;background:#ebf7e9;border-radius:14px}
+.strip-shield{width:44px;height:44px;object-fit:contain;flex:none}.strip strong{font-size:20px;font-weight:800;color:#3fae6f;white-space:nowrap;margin-right:10px}.strip span{font-size:16px;font-weight:500;color:#1e2744}.strip-hearts{position:absolute;right:55px;bottom:0;width:95px}
+@media(max-width:1300px){.main-nav{margin-left:24px;gap:3px}.nav-link{padding:0 9px;font-size:15px}.features{grid-template-columns:repeat(3,minmax(0,1fr))}.strip-hearts{display:none}}
+@media(max-width:1050px){.main-nav{display:none}.hero{background-position:72% top}.hero-inner{padding-left:40px}.hero p{font-size:18px}.strip{flex-wrap:wrap;padding:16px 24px}}
+@media(max-width:700px){.header-inner{padding:12px 16px;gap:10px}.brand-logo{width:64px;height:64px}.brand-name{font-size:42px}.brand-tag{font-size:12px;line-height:14px}.btn-login{min-height:44px;padding:0 16px}.btn-login span{display:none}.hero{min-height:0;padding-bottom:80px;background-position:78% top;background-size:auto 100%}.hero-inner{min-height:0;padding:36px 16px 0}.hero h1{font-size:clamp(42px,11vw,58px);line-height:.98}.hero p br{display:none}.hero p{background:rgba(255,255,255,.78);border-radius:14px;padding:10px 12px}.hero-actions{flex-direction:column;gap:14px}.btn{width:100%}.features-panel{margin:-40px 8px 0;padding:20px 8px 10px}.features{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0}.card-inner{padding:12px 10px 0}.card h2{font-size:18px}.card p{font-size:14px}.strip strong{font-size:18px}.strip span{font-size:15px}}
+@media(max-width:440px){.features{grid-template-columns:1fr}.card-inner{min-height:260px}}
