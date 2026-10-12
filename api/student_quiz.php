@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/../auth/guard.php'; requireRole('student'); require_once __DIR__ . '/../config/database.php'; require_once __DIR__ . '/achievement_engine.php'; require_once __DIR__ . '/../config/seed_basic_greetings.php';
 ob_start();
+require_once __DIR__ . '/../auth/guard.php'; requireRole('student'); require_once __DIR__ . '/../config/database.php'; require_once __DIR__ . '/achievement_engine.php'; require_once __DIR__ . '/../config/seed_basic_greetings.php';
 header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store');
 function quizOut(array $d,int $code=200):never{while(ob_get_level()>0)ob_end_clean();http_response_code($code);header('Content-Type: application/json; charset=utf-8');echo json_encode($d,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);exit;}
 function quizInput():array{$d=json_decode(file_get_contents('php://input')?:'',true);return is_array($d)?$d:$_POST;}
