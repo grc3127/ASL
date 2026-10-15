@@ -82,6 +82,18 @@ try {
             catch(Throwable $settingsError){error_log('KIDSS settings table is missing; using default school year. '.$settingsError->getMessage());}
             out(['success'=>true,'classes'=>$classes,'teachers'=>$teachers,'students'=>$students,'school_year'=>$schoolYearRow]);
         }
+        if ($view==='class_roster') {
+            $classId=(int)($_GET['class_id']??0);
+            if(!$classId)out(['success'=>false,'message'=>'Class ID is required.'],422);
+            $classSql="SELECT c.class_id,c.class_name,c.grade_level,c.section,c.school_year,c.status,CONCAT_WS(' ',t.first_name,t.middle_name,t.last_name) teacher_name FROM classes c JOIN teachers t ON t.teacher_id=c.teacher_id WHERE c.class_id=?";
+            $classParams=[$classId];
+            if($isTeacher){$classSql.=" AND c.teacher_id=?";$classParams[]=$teacherId;}
+            $cq=$pdo->prepare($classSql);$cq->execute($classParams);$class=$cq->fetch();
+            if(!$class)out(['success'=>false,'message'=>'Class not found or you do not have permission to view this roster.'],404);
+            $sq=$pdo->prepare("SELECT s.student_id,s.student_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,cs.enrolled_at,cs.status enrollment_status FROM class_students cs JOIN students s ON s.student_id=cs.student_id WHERE cs.class_id=? AND cs.status='active' ORDER BY s.last_name,s.first_name,s.student_id");
+            $sq->execute([$classId]);
+            out(['success'=>true,'class'=>$class,'students'=>$sq->fetchAll()]);
+        }
         if ($view==='progress') {
             $sql="SELECT s.student_id,s.student_number,CONCAT_WS(' ',s.first_name,s.middle_name,s.last_name) student_name,
                 GROUP_CONCAT(DISTINCT CONCAT(c.class_name,IF(c.section IS NULL OR c.section='', '',CONCAT(' - ',c.section))) SEPARATOR ', ') class_names,
